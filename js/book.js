@@ -333,8 +333,8 @@ export function openBook(root, opts) {
         onSelect: () => shareLink({ title: b.title, text: `${b.title}のしおり`, url }),
       } : null,
       b.done
-        ? { label: '済みを外す', sub: '本棚に戻します', icon: 'shelf', onSelect: () => change(x => { delete x.done; }, '本棚に戻しました') }
-        : { label: '済みにする', sub: '思い出の棚に入れます', icon: 'shelf', onSelect: () => change(x => { x.done = true; }, '思い出の棚に入れました') },
+        ? { label: '本棚に戻す', icon: 'shelf', onSelect: () => change(x => { delete x.done; }, '本棚に戻しました') }
+        : { label: '思い出の棚にしまう', icon: 'shelf', onSelect: () => change(x => { x.done = true; }, '思い出の棚にしまいました') },
       { label: 'しおりを消す', icon: 'trash', danger: true, onSelect: () => remove() },
     ]);
   }

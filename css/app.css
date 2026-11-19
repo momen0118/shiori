@@ -5,7 +5,8 @@
 :root{
   --c-kaki:#C9784F;--c-yamabuki:#D3A541;--c-wakakusa:#8DAE5E;--c-seiji:#6FAA9C;
   --c-ai:#5677A8;--c-fuji:#9787C2;--c-sakura:#D3909F;--c-nezumi:#8E8C88;
-  --c-yu:#5FA3C9; /* ラベル「温泉」用（表紙の色にはない） */
+  /* ラベル用（表紙の色にはない）：温泉・出発・帰宅 */
+  --c-yu:#5FA3C9;--c-akane:#D46A62;--c-ume:#B672B0;
 
   --bg:#15171C;--sf:#1F2229;--sf2:#282C34;--tx:#E7E8EB;--mu:#9A9FAA;--ln:#353A43;--base:#14161A;
   --dim:rgba(0,0,0,.55);--red:#EE877E;--red-soft:rgba(238,135,126,.14);--warn:#E8B867;--warn-soft:rgba(232,184,103,.13);
@@ -98,8 +99,7 @@ a{color:var(--acc)}
   position:absolute;left:0;right:0;top:0;z-index:8;height:var(--top);
   padding:var(--st) calc(6px + var(--sr)) 0 calc(4px + var(--sl));
   display:flex;align-items:center;justify-content:space-between;
-  background:color-mix(in srgb,var(--bg) 82%,transparent);
-  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  background:var(--bg);border-bottom:1px solid var(--ln);
 }
 .topbar.static{position:sticky}
 .tb-btn{
