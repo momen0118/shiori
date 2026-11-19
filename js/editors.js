@@ -179,11 +179,16 @@ export function shiftSheet(ctx, di, ord) {
   const items = dayItems(ctx.book, di);
   const stops = stopsOf(items).slice(ord);
   if (!stops.length) return;
+  // iPhone の数字キーボードには「−」がないので、向き（後ろへ・前へ）と分を別々に選ぶ
+  let dir = 1;
+  let amount = 0;
   let min = 0;
   const preview = h('div', { class: 'shift-preview' });
-  const num = textInput({ value: '', placeholder: '分', type: 'number', inputmode: 'numeric' });
+  const num = textInput({ value: '', placeholder: '分', type: 'text', inputmode: 'numeric' });
   num.classList.add('num');
+  num.setAttribute('pattern', '[0-9]*');
   const draw = () => {
+    min = dir * amount;
     preview.replaceChildren(...stops.slice(0, 6).map(({ stop }) => {
       const t = [stop.start, stop.end].map(x => {
         const m = toMin(x);
@@ -193,25 +198,36 @@ export function shiftSheet(ctx, di, ord) {
         h('span', { class: 'sp-t' }, stop.start ? `${stop.start} → ${t[0]}` : '時刻なし'),
         h('span', { class: 'sp-n' }, stop.name));
     }), ...(stops.length > 6 ? [h('div', { class: 'note' }, `ほか${stops.length - 6}件`)] : []));
-    btns.forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.m === min)));
+    btns.forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.m === amount && !num.value)));
+    segBtns.forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.d === dir)));
   };
   const shiftT = m => {
     const c = Math.max(0, Math.min(1439, m));
     return `${String(Math.floor(c / 60)).padStart(2, '0')}:${String(c % 60).padStart(2, '0')}`;
   };
-  const opts = [-30, -15, -10, 10, 15, 30, 60];
-  const btns = opts.map(m => h('button', {
+  const segBtns = [[1, '後ろへ（遅らせる）'], [-1, '前へ（早める）']].map(([d, l]) => h('button', {
+    type: 'button', dataset: { d: String(d) },
+    onclick: () => { dir = d; draw(); },
+  }, l));
+  const btns = [10, 15, 30, 60].map(m => h('button', {
     type: 'button', class: 'chip', dataset: { m: String(m) },
-    onclick: () => { min = m; num.value = ''; draw(); },
-  }, (m > 0 ? '+' : '−') + fmtShift(m)));
-  num.addEventListener('input', () => { const v = parseInt(num.value, 10); min = isNaN(v) ? 0 : v; draw(); });
+    onclick: () => { amount = m; num.value = ''; draw(); },
+  }, fmtShift(m)));
+  num.addEventListener('input', () => {
+    const z = num.value.replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/\D/g, '');
+    if (z !== num.value) num.value = z;
+    const v = parseInt(z, 10);
+    amount = isNaN(v) ? 0 : v;
+    draw();
+  });
   draw();
   openSheet({
     title: 'ここから後ろをずらす',
     sub: `「${stops[0].stop.name}」から後ろ ${stops.length}件（${dayName(ctx.book, di)}）`,
     body: [
+      h('div', { class: 'seg', role: 'group' }, segBtns),
       h('div', { class: 'chips' }, btns),
-      h('label', { class: 'fld inline' }, h('span', { class: 'fld-l' }, 'または'), num, h('span', null, '分（前にずらすときは −）')),
+      h('label', { class: 'fld inline' }, h('span', { class: 'fld-l' }, 'または'), num, h('span', null, '分')),
       preview,
     ],
     actions: [
