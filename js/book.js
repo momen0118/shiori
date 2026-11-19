@@ -1,4 +1,4 @@
-// 栞を開いた画面：ページ・右端のインデックスタブ・ページめくり・栞のメニュー
+// しおりを開いた画面：ページ・右端のインデックスタブ・ページめくり・しおりのメニュー
 
 import { h, icon, reducedMotion, clear } from './util.js';
 import { openMenu, confirmSheet, toast, shareLink, sheetIsOpen } from './ui.js';
@@ -66,16 +66,16 @@ export function openBook(root, opts) {
   const stage = h('div', { class: 'stage' });
   const tabs = h('nav', { class: 'tabs', 'aria-label': 'ページ' });
   const top = readOnly
-    ? h('div', { class: 'band' }, icon('eye'), '送られた栞（見るだけ）')
+    ? h('div', { class: 'band' }, icon('eye'), '送られたしおり（見るだけ）')
     : h('div', { class: 'topbar' },
       h('button', { type: 'button', class: 'tb-btn', onclick: () => back() }, icon('chev-l'), '本棚'),
-      h('button', { type: 'button', class: 'tb-btn icon-only', 'aria-label': '栞のメニュー', onclick: () => menu() }, icon('more', 'fill')));
+      h('button', { type: 'button', class: 'tb-btn icon-only', 'aria-label': 'しおりのメニュー', onclick: () => menu() }, icon('more', 'fill')));
   const bookEl = h('div', { class: 'book' + (readOnly ? ' read-only' : '') }, top, stage, tabs);
   root.append(bookEl);
 
   function paintHue() {
     const c = (rec.shiori.cover || {}).color || 'seiji';
-    // 小窓（栞の外に出る）にも同じ色が効くよう、いちばん外側に付ける
+    // 小窓（しおりの外に出る）にも同じ色が効くよう、いちばん外側に付ける
     document.documentElement.style.setProperty('--hue', `var(--c-${c})`);
   }
 
@@ -112,7 +112,7 @@ export function openBook(root, opts) {
 
   /* ---------- 直したら保存 ---------- */
 
-  // fn で栞を直して保存。msg はお知らせ（関数でもよい）。
+  // fn でしおりを直して保存。msg はお知らせ（関数でもよい）。
   // o.render=false なら描き直さない（入力中の欄を保つため）。o.goTo でページ移動。
   function change(fn, msg, o = {}) {
     if (readOnly) return Promise.resolve();
@@ -196,7 +196,10 @@ export function openBook(root, opts) {
   stage.addEventListener('touchstart', e => {
     if (busy || e.touches.length !== 1 || sheetIsOpen()) { t0 = null; return; }
     const tg = e.target;
-    if (tg.closest('.grip, input, textarea, select, [data-noswipe]')) { t0 = null; return; }
+    if (tg.closest('.grip, [data-noswipe]')) { t0 = null; return; }
+    // 入力欄は、入力中（カーソルがある）ときだけスワイプでめくらない
+    const fieldEl = tg.closest('input, textarea, select');
+    if (fieldEl && fieldEl === document.activeElement) { t0 = null; return; }
     const t = e.touches[0];
     if (t.clientX < 18) { t0 = null; return; } // Safari の「戻る」スワイプとぶつけない
     t0 = { x: t.clientX, y: t.clientY, time: Date.now(), axis: null, dx: 0, peer: null, dir: 0 };
@@ -322,17 +325,17 @@ export function openBook(root, opts) {
     openMenu(b.title, [
       { label: '表紙を直す', sub: 'タイトル・日付・行き先・ひとこと', icon: 'pen', onSelect: () => editCover(ctx) },
       { label: '柄と色を変える', icon: 'palette', onSelect: () => editPattern(ctx) },
-      { label: 'Claude 用に書き出す', sub: '栞の JSON をコピー', icon: 'copy', onSelect: () => exportForClaude(rec.shiori) },
+      { label: 'Claude 用に書き出す', sub: 'しおりの JSON をコピー', icon: 'copy', onSelect: () => exportForClaude(rec.shiori) },
       { label: 'Claude から読み込む', sub: '置き換え・いけたらいくだけ足す', icon: 'import', onSelect: () => importInto() },
       rec.prev ? { label: '置き換える前に戻す', icon: 'undo', onSelect: () => undoReplace() } : null,
       url ? {
         label: '送る', sub: `LINE などで送るリンク（${url.length.toLocaleString()}文字）`, icon: 'share',
-        onSelect: () => shareLink({ title: b.title, text: `${b.title}の栞`, url }),
+        onSelect: () => shareLink({ title: b.title, text: `${b.title}のしおり`, url }),
       } : null,
       b.done
         ? { label: '済みを外す', sub: '本棚に戻します', icon: 'shelf', onSelect: () => change(x => { delete x.done; }, '本棚に戻しました') }
         : { label: '済みにする', sub: '思い出の棚に入れます', icon: 'shelf', onSelect: () => change(x => { x.done = true; }, '思い出の棚に入れました') },
-      { label: '栞を消す', icon: 'trash', danger: true, onSelect: () => remove() },
+      { label: 'しおりを消す', icon: 'trash', danger: true, onSelect: () => remove() },
     ]);
   }
 
@@ -376,13 +379,13 @@ export function openBook(root, opts) {
   async function remove() {
     const ok = await confirmSheet({
       title: `「${rec.shiori.title}」を消しますか`,
-      message: 'この栞を iPhone から消します。元に戻せません。心配なら、先に本棚のメニューからバックアップしておいてください。',
+      message: 'このしおりを iPhone から消します。元に戻せません。心配なら、先に本棚のメニューからバックアップしておいてください。',
       ok: '消す', danger: true,
     });
     if (!ok) return;
     await saving;
     await store.deleteBook(rec.id);
-    toast('栞を消しました');
+    toast('しおりを消しました');
     opts.onDeleted && opts.onDeleted();
   }
 

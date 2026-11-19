@@ -1,6 +1,6 @@
 /* 旅のしおり：見た目
    ダークが基本。自動なら iPhone の設定に合わせ、本棚のメニューでダーク・ライトに固定もできる。
-   栞の中では、表紙の色（--hue）がアクセント色になる。 */
+   しおりの中では、表紙の色（--hue）がアクセント色になる。 */
 
 :root{
   --c-kaki:#C9784F;--c-yamabuki:#D3A541;--c-wakakusa:#8DAE5E;--c-seiji:#6FAA9C;
@@ -325,7 +325,9 @@ button.cover-plate:active{opacity:.85}
 /* ---------- メモ ---------- */
 
 .memo-view{background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:14px;line-height:1.75;margin-bottom:12px}
-.memo-edit{min-height:220px;line-height:1.7}
+.memo-edit{min-height:260px;line-height:1.7}
+.memo-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.memo-links .mbtn{max-width:100%;overflow:hidden;text-overflow:ellipsis}
 
 /* ---------- 小窓 ---------- */
 
@@ -430,7 +432,7 @@ input.field::-webkit-date-and-time-value{text-align:left}
 .color-opt i{width:32px;height:32px;border-radius:50%;display:block}
 .color-opt[aria-pressed="true"] i{outline:2.5px solid var(--tx);outline-offset:2px}
 
-/* 新しい栞：持ち物のコピー */
+/* 新しいしおり：持ち物のコピー */
 .pick-list{margin-top:6px;max-height:40dvh;overflow-y:auto;border-top:1px solid var(--ln)}
 .pick{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;border:0;border-bottom:1px solid var(--ln);background:transparent;color:var(--mu);text-align:left;font-size:14.5px}
 .pick .ico{width:22px;height:22px;padding:2px;border:1.5px solid var(--ln);border-radius:6px;stroke:transparent}

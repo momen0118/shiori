@@ -1,4 +1,4 @@
-// 栞の JSON 形式（docs/FORMAT.md）まわり：
+// しおりの JSON 形式（docs/FORMAT.md）まわり：
 // 読み込み・形の点検・整え・古い形の読み替え・中身の数え上げ・書き出し
 
 import { parseJson, JsonError } from './jsonparse.js';
@@ -77,7 +77,7 @@ export function upgrade(raw) {
 const str = v => (typeof v === 'string' ? v.trim() : typeof v === 'number' ? String(v) : '');
 const text = v => (typeof v === 'string' ? v.replace(/\r\n?/g, '\n').replace(/^\s*\n|\s+$/g, '') : typeof v === 'number' ? String(v) : '');
 
-// 生の JSON（オブジェクト）を、栞の形に整える。
+// 生の JSON（オブジェクト）を、しおりの形に整える。
 // 知らない項目は捨てる。空の値は省く。
 // 戻り値：{ book, errors:[...], warnings:[...] }
 //   errors   … 読み込みを止めるべきもの（必須の名前がない など）
@@ -86,7 +86,7 @@ export function normalize(raw, { requireTitle = true } = {}) {
   const errors = [];
   const warnings = [];
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
-    return { book: null, errors: ['栞の形になっていません（いちばん外側が { } ではありません）'], warnings };
+    return { book: null, errors: ['しおりの形になっていません（いちばん外側が { } ではありません）'], warnings };
   }
   if (raw.format === BACKUP_FORMAT) {
     return { book: null, errors: ['これはバックアップのデータです。本棚のメニューの「バックアップから戻す」から読み込んでください'], warnings };
@@ -103,7 +103,7 @@ export function normalize(raw, { requireTitle = true } = {}) {
 
   const title = str(b.title);
   if (title) book.title = title;
-  else if (requireTitle) errors.push('栞のタイトル（"title"）がありません');
+  else if (requireTitle) errors.push('しおりのタイトル（"title"）がありません');
 
   let start = isDate(b.startDate) ? b.startDate : '';
   let end = isDate(b.endDate) ? b.endDate : '';
@@ -299,7 +299,7 @@ export function toJson(book, pretty = true) {
   return JSON.stringify(tidy(book), null, pretty ? 2 : 0);
 }
 
-/* ---------- バックアップ（全部の栞をまとめて1つ） ---------- */
+/* ---------- バックアップ（全部のしおりをまとめて1つ） ---------- */
 
 export function makeBackup(records) {
   return JSON.stringify({
@@ -315,7 +315,7 @@ export function readBackup(raw) {
   const errors = [], warnings = [];
   if (!raw || raw.format !== BACKUP_FORMAT || !Array.isArray(raw.books)) {
     if (raw && (raw.format === FORMAT || raw.title)) {
-      errors.push('これは栞1冊分の JSON です。「Claude から読み込む」から読み込んでください');
+      errors.push('これはしおり1冊分の JSON です。「Claude から読み込む」から読み込んでください');
     } else errors.push('バックアップの形になっていません（"format": "tabi-shiori-backup" がありません）');
     return { books: [], errors, warnings };
   }

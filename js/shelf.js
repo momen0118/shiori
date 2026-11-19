@@ -1,4 +1,4 @@
-// 本棚（ホーム）と思い出の棚、新しい栞
+// 本棚（ホーム）と思い出の棚、新しいしおり
 
 import { h, icon, clear, fmtRangeShort, todayStr, uid } from './util.js';
 import { openSheet, closeSheet, openMenu, getTheme, setTheme } from './ui.js';
@@ -22,7 +22,7 @@ export async function renderShelf(root, nav) {
   const head = h('div', { class: 'shelf-head' },
     h('h1', { class: 'p-h big' }, '本棚'),
     h('div', { class: 'shelf-acts' },
-      btn('新しい栞', () => newBook(recs, nav), '', 'plus'),
+      btn('新しいしおり', () => newBook(recs, nav), '', 'plus'),
       h('button', { type: 'button', class: 'tb-btn icon-only', 'aria-label': '本棚のメニュー', onclick: () => shelfMenu(nav) }, icon('more', 'fill'))));
 
   const body = [head];
@@ -45,10 +45,10 @@ export async function renderShelf(root, nav) {
 
   if (!recs.length) {
     body.push(h('div', { class: 'welcome' },
-      h('p', null, 'まだ栞がありません。'),
-      h('p', { class: 'note' }, '「新しい栞」からタイトルだけで作れます。Claude と相談した JSON があれば、右上のメニューの「Claude から読み込む」から入れられます。')));
+      h('p', null, 'まだしおりがありません。'),
+      h('p', { class: 'note' }, '「新しいしおり」からタイトルだけで作れます。Claude と相談した JSON があれば、右上のメニューの「Claude から読み込む」から入れられます。')));
   } else if (!live.length) {
-    body.push(h('p', { class: 'empty' }, '本棚は空です。済みにした栞は思い出の棚にあります。'));
+    body.push(h('p', { class: 'empty' }, '本棚は空です。済みにしたしおりは思い出の棚にあります。'));
   }
 
   body.push(h('button', { type: 'button', class: 'shelf-link', onclick: () => nav.memories() },
@@ -67,7 +67,7 @@ export async function renderMemories(root, nav) {
     h('div', { class: 'pg' },
       h('div', { class: 'shelf-head' }, h('h1', { class: 'p-h big' }, '思い出の棚'), h('span', { class: 'p-sub' }, `${recs.length}冊`)),
       recs.length ? h('div', { class: 'grid2' }, recs.map(r => tile(r, nav)))
-        : h('p', { class: 'empty' }, '済みにした栞がここに並びます。栞のメニューの「済みにする」で入ります。'))));
+        : h('p', { class: 'empty' }, '済みにしたしおりがここに並びます。しおりのメニューの「済みにする」で入ります。'))));
 }
 
 function tile(r, nav) {
@@ -80,7 +80,7 @@ function tile(r, nav) {
 const pat = r => (r.shiori.cover && r.shiori.cover.pattern) || 'gingham';
 const hue = r => ({ '--hue': `var(--c-${(r.shiori.cover && r.shiori.cover.color) || 'seiji'})` });
 
-// 計画中の並び：これからの旅は近い順 → 過ぎた旅は新しい順 → 日付のない栞
+// 計画中の並び：これからの旅は近い順 → 過ぎた旅は新しい順 → 日付のないしおり
 function byPlan(today) {
   const rank = r => (!r.shiori.startDate ? 2 : r.shiori.startDate >= today ? 0 : 1);
   return (a, b) => {
@@ -95,7 +95,7 @@ function byPlan(today) {
 function shelfMenu(nav) {
   openMenu('本棚', [
     {
-      label: 'Claude から読み込む', sub: '新しい栞として', icon: 'import',
+      label: 'Claude から読み込む', sub: '新しいしおりとして', icon: 'import',
       onSelect: () => openImport({
         mode: 'new',
         onApply: async (_, book) => {
@@ -123,17 +123,17 @@ function themeSheet() {
   draw();
   openSheet({
     title: '画面の色',
-    body: [box, h('p', { class: 'note' }, 'この iPhone での見え方だけが変わります。送った栞を見る人の画面は、その人の設定のままです。')],
+    body: [box, h('p', { class: 'note' }, 'この iPhone での見え方だけが変わります。送ったしおりを見る人の画面は、その人の設定のままです。')],
     actions: [btn('できた', () => closeSheet(), 'pri')],
   });
 }
 
-/* ---------- 新しい栞 ---------- */
+/* ---------- 新しいしおり ---------- */
 
 function newBook(recs, nav) {
   const title = textInput({ placeholder: '例：〇〇温泉 1泊2日', enterkeyhint: 'done' });
   const err = h('div');
-  // 持ち物のコピー元：持ち物のある栞。初期値は直近の旅（開始日が新しい順、なければ更新が新しい順）
+  // 持ち物のコピー元：持ち物のあるしおり。初期値は直近の旅（開始日が新しい順、なければ更新が新しい順）
   const sources = recs.filter(r => r.shiori.packing && r.shiori.packing.length)
     .sort((a, b) => (b.shiori.startDate || '').localeCompare(a.shiori.startDate || '') || (b.updatedAt || '').localeCompare(a.updatedAt || ''));
   let src = sources[0] || null;
@@ -153,7 +153,7 @@ function newBook(recs, nav) {
     }, icon('check'), h('span', null, p)))) : null;
     const cnt = h('div', { class: 'note' }, src ? `${picked.size}個を取り込みます（いらない物はタップで外す）` : '');
     packBox.replaceChildren(
-      h('div', { class: 'sec-l' }, '持ち物を前の栞からコピー'),
+      h('div', { class: 'sec-l' }, '持ち物を前のしおりからコピー'),
       h('div', { class: 'chips col' }, opts.map(([r, l]) => h('button', {
         type: 'button', class: 'chip', 'aria-pressed': String(r === src),
         onclick: () => { src = r; picked = new Set(r ? r.shiori.packing.map((_, i) => i) : []); drawPack(); },
@@ -179,9 +179,9 @@ function newBook(recs, nav) {
   title.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); title.blur(); } });
 
   openSheet({
-    title: '新しい栞',
+    title: '新しいしおり',
     body: [
-      field('タイトル', title, '入れるのはタイトルだけで大丈夫。日付や表紙はあとから変えられます'),
+      field('タイトル', title, '日付や表紙はあとから変えられます'),
       packBox,
       err,
     ],

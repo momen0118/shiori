@@ -200,7 +200,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
 <header class="top">
   <div class="eyebrow">仕様書 第1版 · 2026-11-19</div>
   <h1>旅のしおり</h1>
-  <p class="lede">家族旅行の栞を作って、旅行中に見て、その場で予定を変えられる個人用ツール。この仕様書は会議で決めたことをまとめたもので、Claude Code はこれと <code>FORMAT.md</code> をもとに作る。</p>
+  <p class="lede">家族旅行のしおりを作って、旅行中に見て、その場で予定を変えられる個人用ツール。この仕様書は会議で決めたことをまとめたもので、Claude Code はこれと <code>FORMAT.md</code> をもとに作る。</p>
   <div class="chips">
     <span class="chip">GitHub Pages に置く静的サイト</span>
     <span class="chip">iPhone のホーム画面に追加して使う</span>
@@ -211,7 +211,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
     <li><a href="#rules"><span>1</span>大事にすること</a></li>
     <li><a href="#overview"><span>2</span>全体の仕組み</a></li>
     <li><a href="#shelf"><span>3</span>本棚と思い出の棚</a></li>
-    <li><a href="#inside"><span>4</span>栞の中の共通ルール</a></li>
+    <li><a href="#inside"><span>4</span>しおりの中の共通ルール</a></li>
     <li><a href="#cover"><span>5</span>表紙</a></li>
     <li><a href="#packing"><span>6</span>持ち物</a></li>
     <li><a href="#itinerary"><span>7</span>行程</a></li>
@@ -239,20 +239,20 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
   <div class="prose">
     <ul class="spec">
       <li><b>主役は旅行中。</b>開いたらすぐ「今どこか」がわかって、予定はその場で気軽に変えられる。</li>
-      <li><b>書いても書かなくてもいい。</b>必須は名前だけ（栞のタイトル、立ち寄りの名前、いけたらいくの名前）。それ以外は全部空けてよく、空いている欄やボタンは画面に出さない。計画は楽しく、義務にはしない。</li>
+      <li><b>書いても書かなくてもいい。</b>必須は名前だけ（しおりのタイトル、立ち寄りの名前、いけたらいくの名前）。それ以外は全部空けてよく、空いている欄やボタンは画面に出さない。計画は楽しく、義務にはしない。</li>
       <li><b>作るのは自分だけ。</b>夫には送ったリンクで見てもらうだけで、夫の側には何も保存しない。</li>
       <li><b>ダークモードが基本。</b>ライトモードも同じ手間で整える。ふだんは iPhone の設定に合わせて切り替わり、本棚のメニューの「画面の色」でダーク・ライトに固定もできる（その iPhone だけの設定）。</li>
-      <li><b>見た目は旅行アプリのようにすっきり。</b>ただし表紙とページめくりで栞らしさを出す。紙に寄せすぎない。</li>
+      <li><b>見た目は旅行アプリのようにすっきり。</b>ただし表紙とページめくりでしおりらしさを出す。紙に寄せすぎない。</li>
     </ul>
   </div>
 </section>
 
 <section id="overview">
   <h2><span class="num">2</span>全体の仕組み</h2>
-  <div class="flow" role="img" aria-label="Claudeと自分のiPhoneの栞はJSONでやりとりし、栞はLINEのリンクで夫のiPhoneに送る。持ち物はコピーしてリマインダーに貼る。">
+  <div class="flow" role="img" aria-label="Claudeと自分のiPhoneのしおりはJSONでやりとりし、しおりはLINEのリンクで夫のiPhoneに送る。持ち物はコピーしてリマインダーに貼る。">
     <div class="node"><b>Claude</b><small>旅の相談（プロジェクト）</small></div>
     <div class="arr"><span class="g h">⇄</span><span class="g v">⇅</span>JSON で<br>書き出し・読み込み</div>
-    <div class="node main"><b>自分の iPhone</b><small>栞の原本。作る・直す・見る</small></div>
+    <div class="node main"><b>自分の iPhone</b><small>しおりの原本。作る・直す・見る</small></div>
     <div class="arr"><span class="g h">→</span><span class="g v">↓</span>LINE で<br>リンクを送る</div>
     <div class="node"><b>夫の iPhone</b><small>見るだけ。保存しない</small></div>
   </div>
@@ -262,7 +262,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
   <div class="prose">
     <ul class="spec">
       <li>サーバーもログインもない。GitHub Pages のサイトを iPhone のホーム画面に追加して、アプリのように使う（PWA。電波がなくても開ける）。</li>
-      <li>栞のデータは自分の iPhone の中だけにある。1冊の栞＝ <code>FORMAT.md</code> の形の JSON ひとかたまり。Claude とのやりとり、バックアップ、夫に送るリンクの中身も全部この同じ形。</li>
+      <li>しおりのデータは自分の iPhone の中だけにある。1冊のしおり＝ <code>FORMAT.md</code> の形の JSON ひとかたまり。Claude とのやりとり、バックアップ、夫に送るリンクの中身も全部この同じ形。</li>
     </ul>
   </div>
 </section>
@@ -271,24 +271,24 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
   <h2><span class="num">3</span>本棚と思い出の棚</h2>
   <div class="split">
     <div class="prose">
-      <p>アプリを開いたときのホーム画面。栞の表紙を並べた本棚。</p>
+      <p>アプリを開いたときのホーム画面。しおりの表紙を並べた本棚。</p>
       <ul class="spec">
         <li>表紙を2列で並べる。冊数は多くならないので、背表紙ではなく表紙で見せる。</li>
-        <li>旅行中の栞（今日が開始日〜終了日に入っている栞）があれば一番上に大きく出す。タップでその日の行程ページへ。</li>
-        <li>その下に計画中の栞。開始日が近い順、日付のない栞は最後。「新しい栞」ボタンは上に置く。</li>
-        <li>一番下に「思い出の棚（n冊）」の入口。タップすると別の画面で、済みにした栞が並ぶ。</li>
+        <li>旅行中のしおり（今日が開始日〜終了日に入っているしおり）があれば一番上に大きく出す。タップでその日の行程ページへ。</li>
+        <li>その下に計画中のしおり。開始日が近い順、日付のないしおりは最後。「新しいしおり」ボタンは上に置く。</li>
+        <li>一番下に「思い出の棚（n冊）」の入口。タップすると別の画面で、済みにしたしおりが並ぶ。</li>
         <li>「済み」はただの分類で、いつでも付けたり外したりできる。済みにすると思い出の棚へ移り、外すと本棚に戻る。済みにしても編集はできる（ロックしない）。ハンコなどの印は付けない。</li>
-        <li>右上のメニュー：Claude から読み込む（新しい栞として）、全部まとめてバックアップ、バックアップから戻す、画面の色（自動・ダーク・ライト）。</li>
+        <li>右上のメニュー：Claude から読み込む（新しいしおりとして）、全部まとめてバックアップ、バックアップから戻す、画面の色（自動・ダーク・ライト）。</li>
       </ul>
-      <h3>新しい栞を作るとき</h3>
+      <h3>新しいしおりを作るとき</h3>
       <ul class="spec">
         <li>入れるのはタイトルだけでいい。日付、表紙の柄と色はあとからでも変えられる。</li>
-        <li>持ち物を前の栞からコピーするか選ぶ（<a href="#packing">6 持ち物</a>）。</li>
+        <li>持ち物を前のしおりからコピーするか選ぶ（<a href="#packing">6 持ち物</a>）。</li>
       </ul>
     </div>
     <figure style="margin:0">
       <div class="mock"><div class="phone"><div class="screen"><div class="pad">
-        <div class="m-head"><span class="m-h">本棚</span><span style="display:inline-flex;align-items:center;gap:10px"><span class="m-btn"><svg class="ico"><use href="#i-plus"/></svg>新しい栞</span><svg class="ico fill" style="color:var(--a-mu)"><use href="#i-more"/></svg></span></div>
+        <div class="m-head"><span class="m-h">本棚</span><span style="display:inline-flex;align-items:center;gap:10px"><span class="m-btn"><svg class="ico"><use href="#i-plus"/></svg>新しいしおり</span><svg class="ico fill" style="color:var(--a-mu)"><use href="#i-more"/></svg></span></div>
         <div class="m-sec">旅行中</div>
         <div class="cv pat p-gingham" style="--hue:var(--seiji);height:150px;flex-direction:column;align-items:stretch;justify-content:flex-end;gap:8px">
           <div class="daisen"><b>〇〇温泉 1泊2日</b><small>11/21（土）〜 11/22（日）</small></div>
@@ -307,16 +307,16 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
 </section>
 
 <section id="inside">
-  <h2><span class="num">4</span>栞の中の共通ルール</h2>
+  <h2><span class="num">4</span>しおりの中の共通ルール</h2>
   <div class="prose">
     <ul class="spec">
       <li>ページの順番：<b>表紙 → 持ち物 → 1日目 … n日目 → 立ち寄り先 → メモ</b>。日数は開始日〜終了日から決まる。日付がなければ日を手で足せる。</li>
       <li>左右のスワイプで紙をめくるような演出でページが変わる。ページの中は縦にスクロールできる（紙なのに縦に伸びるのは気にしない）。動きを減らす設定の iPhone では、めくりの演出を控えめにする。</li>
-      <li>画面の右端に縦書きのインデックスタブ。タップでそのページへ一発で飛ぶ。今いるページのタブは栞の色。</li>
+      <li>画面の右端に縦書きのインデックスタブ。タップでそのページへ一発で飛ぶ。今いるページのタブはしおりの色。</li>
       <li>並べ替えは、行の左の「つまみ」を掴んだときだけ動く。ページめくりのスワイプとぶつからないようにするため。</li>
-      <li>栞を開いたとき：旅行中なら今日の行程ページから。それ以外は表紙から。</li>
-      <li>表紙で選んだ色が、その栞全体のアクセント色になる（タブ、見出し、「いまここ」の枠、ボタン）。</li>
-      <li>栞のメニュー：Claude 用に書き出す、Claude から読み込む（置き換え・いけたらいくだけ足す）、置き換える前に戻す、送る（夫に送る）、済みにする／外す、栞を消す。</li>
+      <li>しおりを開いたとき：旅行中なら今日の行程ページから。それ以外は表紙から。</li>
+      <li>表紙で選んだ色が、そのしおり全体のアクセント色になる（タブ、見出し、「いまここ」の枠、ボタン）。</li>
+      <li>しおりのメニュー：Claude 用に書き出す、Claude から読み込む（置き換え・いけたらいくだけ足す）、置き換える前に戻す、送る（夫に送る）、済みにする／外す、しおりを消す。</li>
       <li>文字は、タイトルと見出しだけ丸ゴシック（iPhone 内蔵の「ヒラギノ丸ゴ」）で少し柔らかく、本文はふつうのゴシック（iPhone 内蔵の「ヒラギノ角ゴ」）で読みやすく。外部のフォントは読み込まないので、電波がなくても同じ見た目になる。</li>
     </ul>
   </div>
@@ -344,7 +344,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
           <div class="d">11月21日（土）〜 22日（日）</div>
           <div class="s">〇〇温泉 ／ 紅葉がまだ残っていますように</div>
         </div>
-        <div class="flip-hint">左へめくると持ち物</div>
+        <div class="flip-hint">スワイプでめくる</div>
       </div></div></div>
       <figcaption class="cap">表紙（右端がインデックスタブ）</figcaption>
     </figure>
@@ -382,9 +382,9 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
         <li>分類なし。1行1項目のシンプルなリスト。その場で追加・名前の修正・削除・並べ替え（つまみ）ができる。</li>
         <li>まとめて追加：改行区切りのテキストを貼ると、1行ずつ別の項目として入る。Claude と洗い出したリストもこれで一気に入れられる。</li>
         <li><b>リマインダー用にコピー：</b>「・」や「-」などの記号を付けず、項目名だけを改行区切りでコピーする。iPhone のリマインダーのリストに貼ると1行1項目になる（実機で確認済み。メモアプリはチェックリストにならなかったのでリマインダーを使う）。</li>
-        <li>栞の中ではチェックしない。チェックはリマインダーでする。</li>
-        <li>テンプレの仕組みは作らない。新しい栞を作るときに「前の栞から持ち物をコピー」する。コピー元は選べて、初期値は直近の栞。取り込む前に一覧が出て、今回いらない物は外してから取り込める。</li>
-        <li>夫に送った栞の持ち物ページにも、同じコピーボタンを置く。</li>
+        <li>しおりの中ではチェックしない。チェックはリマインダーでする。</li>
+        <li>テンプレの仕組みは作らない。新しいしおりを作るときに「前のしおりから持ち物をコピー」する。コピー元は選べて、初期値は直近のしおり。取り込む前に一覧が出て、今回いらない物は外してから取り込める。</li>
+        <li>夫に送ったしおりの持ち物ページにも、同じコピーボタンを置く。</li>
       </ul>
     </div>
     <figure style="margin:0">
@@ -420,7 +420,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
       <ul class="spec">
         <li>1日1ページ。見出しは「n日目」と日付・曜日。</li>
         <li>左に時刻、右に立ち寄りの箱、箱と箱の間に移動。<b>箱の高さは時間に比例させない</b>（中身に合わせる）。</li>
-        <li>旅行中は、今の時刻にあたる箱に「いまここ」と栞の色の枠を付ける（開始〜終了の間。終了がなければ次の予定の開始まで）。</li>
+        <li>旅行中は、今の時刻にあたる箱に「いまここ」としおりの色の枠を付ける（開始〜終了の間。終了がなければ次の予定の開始まで）。</li>
       </ul>
       <h3>立ち寄りの箱</h3>
       <table class="fields">
@@ -583,8 +583,8 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
   <h2><span class="num">10</span>メモ</h2>
   <div class="prose">
     <ul class="spec">
-      <li>栞ごとの自由なメモ欄。行程の箱のメモとは別。</li>
-      <li>中に書いた URL と電話番号はタップで開ける・かけられる（行程の箱のメモ、予約のメモも同じ）。</li>
+      <li>しおりごとの自由なメモ欄。行程の箱のメモとは別。</li>
+      <li>メモのページはそのまま書き込める（「直す」ボタンなし。書いたそばから保存）。中に書いた URL と電話番号は、欄の下にボタンで並べて、タップで開ける・かけられる。行程の箱のメモ・予約のメモは、本文の中でタップできる。</li>
     </ul>
   </div>
 </section>
@@ -593,11 +593,11 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
   <h2><span class="num">11</span>保存とバックアップ</h2>
   <div class="prose">
     <ul class="spec">
-      <li>データは IndexedDB に保存する。栞1冊を <code>FORMAT.md</code> の形の JSON ひとかたまりとして持つ。将来、夫との同期を足したくなったら、保存先を差し替えるだけで済むようにしておく。</li>
-      <li>PWA にする（manifest と service worker）。ホーム画面から開けて、電波がなくても栞が見られる。</li>
+      <li>データは IndexedDB に保存する。しおり1冊を <code>FORMAT.md</code> の形の JSON ひとかたまりとして持つ。将来、夫との同期を足したくなったら、保存先を差し替えるだけで済むようにしておく。</li>
+      <li>PWA にする（manifest と service worker）。ホーム画面から開けて、電波がなくてもしおりが見られる。</li>
       <li>iPhone の Safari には、しばらく開かないサイトのデータを消す仕組みがある。自分の環境では今まで消えたことはないが、念のためホーム画面に追加して使う前提にして、バックアップも付ける。</li>
-      <li>バックアップ：本棚のメニューから、全部の栞をまとめて1つの JSON として書き出す（ファイルに保存、またはコピー）。同じものから戻せる。</li>
-      <li>Claude からの JSON で栞を置き換えるときは、置き換える前の状態を栞ごとに1つ控えておき、メニューから戻せるようにする。</li>
+      <li>バックアップ：本棚のメニューから、全部のしおりをまとめて1つの JSON として書き出す（ファイルに保存、またはコピー）。同じものから戻せる。</li>
+      <li>Claude からの JSON でしおりを置き換えるときは、置き換える前の状態をしおりごとに1つ控えておき、メニューから戻せるようにする。</li>
     </ul>
   </div>
 </section>
@@ -606,9 +606,9 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
   <h2><span class="num">12</span>夫に送る</h2>
   <div class="prose">
     <ul class="spec">
-      <li>栞のメニューの「送る」で、栞まるごとを JSON → 圧縮して、リンクの <code>#</code> 以降に入れる。iPhone の共有シートを開いて LINE で送る。</li>
+      <li>しおりのメニューの「送る」で、しおりまるごとを JSON → 圧縮して、リンクの <code>#</code> 以降に入れる。iPhone の共有シートを開いて LINE で送る。</li>
       <li><code>#</code> 以降はサーバーに送られないので、データはどこにも保存されない。リンクを知っている人なら見られるが、LINE で夫に送るだけなので問題にしない。</li>
-      <li>受け取った側は、同じサイトで栞を見るだけ。何も保存しない。見たいときはまたリンクを開く。上の方に「送られた栞（見るだけ）」とわかる帯を出す。</li>
+      <li>受け取った側は、同じサイトでしおりを見るだけ。何も保存しない。見たいときはまたリンクを開く。上の方に「送られたしおり（見るだけ）」とわかる帯を出す。</li>
       <li>受け取り画面でも、持ち物の「リマインダー用にコピー」は使える。Gmail のボタン（自分のメールを開くもの）は出さない。</li>
       <li>表紙は柄と色の名前だけ入るので、同じ表紙で見える。</li>
       <li>リンクの中身は送った時点のもの。予定を変えたら送り直す。</li>
@@ -623,13 +623,13 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
     <div class="cols2">
       <div class="box">
         <h3 style="margin-top:0">書き出し</h3>
-        <p>今の栞を JSON にしてコピーする。Claude に貼って相談するため。</p>
+        <p>今のしおりを JSON にしてコピーする。Claude に貼って相談するため。</p>
       </div>
       <div class="box">
         <h3 style="margin-top:0">読み込み（3種類）</h3>
         <ul class="spec">
-          <li>新しい栞として（本棚のメニューから）</li>
-          <li>今の栞と置き換え（控えを1つ残す）</li>
+          <li>新しいしおりとして（本棚のメニューから）</li>
+          <li>今のしおりと置き換え（控えを1つ残す）</li>
           <li>いけたらいくだけ足す</li>
         </ul>
       </div>
@@ -637,7 +637,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
     <ul class="spec">
       <li>テキストの貼り付けが基本。ファイルからも読める。コードブロックの記号ごと貼っても読めるようにする。</li>
       <li>読み込む前に中身の確認を出す（例：2日間・立ち寄り6件・予約1件・いけたらいく1件）。形がおかしいときは、どこがおかしいかを平易な言葉で出す。</li>
-      <li>旅行中の組み直しの流れ：栞で書き出し → Claude に貼って「雨なので2日目の午後を組み直して」→ 返ってきた JSON を「置き換え」で読み込む。</li>
+      <li>旅行中の組み直しの流れ：しおりで書き出し → Claude に貼って「雨なので2日目の午後を組み直して」→ 返ってきた JSON を「置き換え」で読み込む。</li>
       <li>Claude 側は「旅の相談」用のプロジェクトを作り、<code>FORMAT.md</code> をナレッジに入れ、指示文（<code>FORMAT.md</code> の冒頭）を貼っておく。</li>
     </ul>
   </div>
@@ -648,7 +648,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
   <div class="prose">
     <ul class="spec">
       <li><span class="st chk">要確認</span>Gmail の検索リンクが、Gmail アプリと Safari のどちらで開くか。うまく開かなければ「予約番号をコピー → Gmail で検索」の形にする。</li>
-      <li><span class="st chk">要確認</span>夫に送るリンクの長さ。2泊くらいの栞を LINE で送って、途中で切れないか。</li>
+      <li><span class="st chk">要確認</span>夫に送るリンクの長さ。2泊くらいのしおりを LINE で送って、途中で切れないか。</li>
       <li><span class="st chk">要確認</span>ホーム画面から開いたときに、地図や Gmail のリンクがちゃんと外のアプリで開くか。</li>
       <li><span class="st chk">要確認</span>ページめくりのスワイプと、縦スクロール・つまみでの並べ替えがぶつからないか。</li>
       <li><span class="st chk">要確認</span>開始時刻なしの予定。使ってみて要らなければなくす。</li>
@@ -663,7 +663,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
       <li>夫との同期、夫の書き込み、ログインやアカウント</li>
       <li>写真や画像の表紙</li>
       <li>ナビ開始ボタン、地図の検索リンクの自動生成</li>
-      <li>栞の中での持ち物チェック、ショートカットアプリとの連携</li>
+      <li>しおりの中での持ち物チェック、ショートカットアプリとの連携</li>
       <li>持ち物の分類、テンプレの仕組み</li>
       <li>予約の種類分け、人数・電話・料金・支払いなどの欄</li>
       <li>済みのロック、済みのハンコ</li>
@@ -673,7 +673,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
 </section>
 
 <footer>
-  関連ファイル：<code>FORMAT.md</code>（栞の JSON 形式。リポジトリと Claude のプロジェクトのナレッジに置く）
+  関連ファイル：<code>FORMAT.md</code>（しおりの JSON 形式。リポジトリと Claude のプロジェクトのナレッジに置く）
 </footer>
 </div>
 

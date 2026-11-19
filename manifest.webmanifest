@@ -1,7 +1,7 @@
 {
   "name": "旅のしおり",
   "short_name": "しおり",
-  "description": "家族旅行の栞",
+  "description": "家族旅行のしおり",
   "lang": "ja",
   "start_url": "./",
   "scope": "./",
