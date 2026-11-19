@@ -1,7 +1,7 @@
 // 起動と画面の切り替え
 //   #/            本棚
 //   #/memories    思い出の棚
-//   #/book/<id>   栞
+//   #/book/<id>   しおり
 //   #s=<データ>   夫に送ったリンク（見るだけ）
 
 import { h, icon } from './util.js';
@@ -42,7 +42,7 @@ async function route() {
     if (hash.startsWith('#/book/')) {
       const id = decodeURIComponent(hash.slice(7));
       const rec = await store.getBook(id);
-      if (!rec) { toast('栞が見つかりませんでした'); return nav.shelf(); }
+      if (!rec) { toast('しおりが見つかりませんでした'); return nav.shelf(); }
       const startKey = pendingStart; pendingStart = null;
       current = openBook(root, {
         rec, readOnly: false, startKey,
@@ -62,10 +62,10 @@ async function route() {
 function showShared(shared) {
   document.body.classList.add('viewer');
   if (shared.error) {
-    return showError('栞を開けませんでした', 'リンクが途中で切れているかもしれません。送った人に、もう一度送ってもらってください。');
+    return showError('しおりを開けませんでした', 'リンクが途中で切れているかもしれません。送った人に、もう一度送ってもらってください。');
   }
   const n = normalize(shared.value, { requireTitle: false });
-  if (!n.book) return showError('栞を開けませんでした', 'リンクの中身が栞の形になっていません。');
+  if (!n.book) return showError('しおりを開けませんでした', 'リンクの中身がしおりの形になっていません。');
   if (!n.book.title) n.book.title = '旅のしおり';
   ensureCover(n.book);
   document.title = n.book.title + '｜旅のしおり';

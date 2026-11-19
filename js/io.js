@@ -10,12 +10,12 @@ import * as store from './store.js';
 
 // メニューのボタンの中から呼ぶ（コピーはボタンを押した処理の中で）
 export function exportForClaude(book) {
-  copyText(toJson(book), { done: '栞の JSON をコピーしました。Claude に貼って相談できます', title: 'Claude 用に書き出す' });
+  copyText(toJson(book), { done: 'しおりの JSON をコピーしました。Claude に貼って相談できます', title: 'Claude 用に書き出す' });
 }
 
 /* ---------- Claude から読み込む ---------- */
 
-// mode: 'new'（新しい栞として）または 'book'（今の栞に：置き換え・いけたらいくだけ足す）
+// mode: 'new'（新しいしおりとして）または 'book'（今のしおりに：置き換え・いけたらいくだけ足す）
 // onApply(kind, data) … kind: 'new' | 'replace' | 'wish'
 export function openImport({ mode, onApply }) {
   let kind = mode === 'new' ? 'new' : 'replace';
@@ -26,7 +26,7 @@ export function openImport({ mode, onApply }) {
   const put = (...n) => putInto(result, ...n);
 
   const seg = mode === 'new' ? null : h('div', { class: 'seg', role: 'group' },
-    [['replace', '今の栞と置き換え'], ['wish', 'いけたらいくだけ足す']].map(([k, l]) => h('button', {
+    [['replace', '今のしおりと置き換え'], ['wish', 'いけたらいくだけ足す']].map(([k, l]) => h('button', {
       type: 'button', 'aria-pressed': String(k === kind),
       onclick: e => {
         kind = k;
@@ -35,13 +35,13 @@ export function openImport({ mode, onApply }) {
       },
     }, l)));
 
-  const okBtn = btn(mode === 'new' ? '新しい栞にする' : '置き換える', () => apply(), 'pri');
+  const okBtn = btn(mode === 'new' ? '新しいしおりにする' : '置き換える', () => apply(), 'pri');
   okBtn.disabled = true;
 
   function check() {
     parsed = null;
     okBtn.disabled = true;
-    okBtn.textContent = kind === 'new' ? '新しい栞にする' : kind === 'replace' ? '置き換える' : '足す';
+    okBtn.textContent = kind === 'new' ? '新しいしおりにする' : kind === 'replace' ? '置き換える' : '足す';
     result.replaceChildren();
     if (!ta.value.trim()) return;
     const r = readText(ta.value);
@@ -81,7 +81,7 @@ export function openImport({ mode, onApply }) {
 
   openSheet({
     title: 'Claude から読み込む',
-    sub: mode === 'new' ? '新しい栞として' : null,
+    sub: mode === 'new' ? '新しいしおりとして' : null,
     body: [
       seg,
       ta,
@@ -109,14 +109,14 @@ function warn(list) {
 
 export async function openBackup() {
   const recs = await store.listBooks();
-  if (!recs.length) { toast('まだ栞がありません'); return; }
+  if (!recs.length) { toast('まだしおりがありません'); return; }
   const json = makeBackup(recs);
   const name = `shiori-backup-${todayStr()}.json`;
   openSheet({
     title: '全部まとめてバックアップ',
     sub: `${recs.length}冊`,
     body: [
-      h('p', { class: 'sheet-text' }, '全部の栞を1つの JSON にまとめます。「ファイルに保存」で iPhone の「ファイル」アプリに置いておくと安心です。同じものから「バックアップから戻す」で戻せます。'),
+      h('p', { class: 'sheet-text' }, '全部のしおりを1つの JSON にまとめます。「ファイルに保存」で iPhone の「ファイル」アプリに置いておくと安心です。同じものから「バックアップから戻す」で戻せます。'),
     ],
     actions: [
       btn('コピー', () => copyText(json, { done: 'バックアップをコピーしました', title: 'バックアップ' }), '', 'copy'),
@@ -155,9 +155,9 @@ export function openRestore(onDone) {
     plan = steps;
     put(h('div', { class: 'msg ok' },
       h('b', null, `${bk.books.length}冊`),
-      h('div', null, [add && `新しく入る ${add}冊`, over && `今の栞を上書き ${over}冊`, same && `同じなので何もしない ${same}冊`].filter(Boolean).join('・'))),
-    over ? h('p', { class: 'note' }, '上書きする栞は、上書き前の状態を控えておきます。その栞のメニューの「置き換える前に戻す」で戻せます。') : null,
-    bk.errors.length ? errorBox(['読めなかった栞：', ...bk.errors]) : null,
+      h('div', null, [add && `新しく入る ${add}冊`, over && `今のしおりを上書き ${over}冊`, same && `同じなので何もしない ${same}冊`].filter(Boolean).join('・'))),
+    over ? h('p', { class: 'note' }, '上書きするしおりは、上書き前の状態を控えておきます。そのしおりのメニューの「置き換える前に戻す」で戻せます。') : null,
+    bk.errors.length ? errorBox(['読めなかったしおり：', ...bk.errors]) : null,
     warn(bk.warnings));
     okBtn.disabled = !(add || over);
   }
@@ -171,7 +171,7 @@ export function openRestore(onDone) {
         await store.putBook({ id: s.b.id || uid(), shiori: s.b.shiori, prev: null });
         n++;
       } else if (s.type === 'over') {
-        // 今の栞を控えに入れてから上書き（データを消さない）
+        // 今のしおりを控えに入れてから上書き（データを消さない）
         await store.putBook({ ...s.cur, prev: s.cur.shiori, shiori: s.b.shiori });
         n++;
       }

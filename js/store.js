@@ -3,7 +3,7 @@
 //
 // 1冊ぶんの記録：
 //   { id, shiori, prev, createdAt, updatedAt }
-//   shiori … FORMAT.md の形の栞 JSON（これが原本）
+//   shiori … FORMAT.md の形のしおり JSON（これが原本）
 //   prev   … Claude からの JSON で置き換える前の控え（1つだけ。なければ null）
 
 import { upgrade } from './format.js';
@@ -71,7 +71,7 @@ export async function putBook(rec) {
   return rec;
 }
 
-// 「栞を消す」を選んで確かめたときだけ使う
+// 「しおりを消す」を選んで確かめたときだけ使う
 export async function deleteBook(id) {
   await tx('readwrite', st => reqP(st.delete(id)));
 }

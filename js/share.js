@@ -1,4 +1,4 @@
-// 夫に送るリンク：栞の JSON を圧縮して、リンクの # のあとに入れる。
+// 夫に送るリンク：しおりの JSON を圧縮して、リンクの # のあとに入れる。
 // # のあとはサーバーに送られないので、データはどこにも残らない。
 // LINE がリンクを途中で切らないよう、記号の少ない文字（A-Z a-z 0-9 - _）だけで書く。
 
@@ -42,7 +42,7 @@ export function makeShareUrl(book) {
   return `${base}#${SHARE_KEY}=${data}`;
 }
 
-// location.hash から栞を取り出す。リンクでなければ null、壊れていれば { error }
+// location.hash からしおりを取り出す。リンクでなければ null、壊れていれば { error }
 export function readShareHash(hash) {
   const m = new RegExp('^#' + SHARE_KEY + '=(.*)$').exec(hash || '');
   if (!m) return null;

@@ -1,4 +1,4 @@
-// 栞の中のページ：表紙・持ち物・n日目・立ち寄り先・メモ
+// しおりの中のページ：表紙・持ち物・n日目・立ち寄り先・メモ
 // それぞれ ctx を受け取って、ページの中身（DOM）を返す。
 
 import { h, icon, linkify, extLink, fmtMD, fmtRangeLong, fmtDuration, addDays, debounce } from './util.js';
@@ -30,7 +30,7 @@ export function renderCover(ctx) {
   sub ? h('div', { class: 's' }, sub) : null);
   return h('div', { class: 'cover-inner' },
     plate,
-    h('div', { class: 'flip-hint' }, '左へめくると持ち物'));
+    h('div', { class: 'flip-hint' }, 'スワイプでめくる'));
 }
 
 /* ---------- 持ち物 ---------- */
@@ -290,22 +290,35 @@ function renderWishlist(ctx) {
 /* ---------- メモ ---------- */
 
 export function renderMemo(ctx) {
-  const ui = ctx.ui;
   const memo = ctx.book.memo || '';
   const head = h('div', { class: 'p-head' }, h('h2', { class: 'p-h' }, 'メモ'));
 
-  if (ctx.readOnly || !ui.memoEditing) {
+  if (ctx.readOnly) {
     return h('div', { class: 'pg' }, head,
-      memo ? h('div', { class: 'memo-view pre' }, linkify(memo)) : h('p', { class: 'empty' }, ctx.readOnly ? 'メモはありません' : '栞全体のメモ。URL や電話番号はタップで開けるようになります。'),
-      ctx.readOnly ? null : h('div', { class: 'btn-row' }, btn(memo ? '直す' : '書く', () => { ui.memoEditing = true; ctx.refresh(); setTimeout(() => { const t = document.querySelector('.memo-edit'); if (t) t.focus(); }, 50); }, '', 'pen')));
+      memo ? h('div', { class: 'memo-view pre' }, linkify(memo)) : h('p', { class: 'empty' }, 'メモはありません'));
   }
 
-  const ta = h('textarea', { class: 'field memo-edit', placeholder: '自由に書けます', rows: 8 });
+  // その場で書ける。書いたそばから保存する
+  const ta = h('textarea', { class: 'field memo-edit', placeholder: 'しおり全体のメモ。自由に書けます', rows: 8 });
   ta.value = memo;
   autosize(ta);
-  const save = debounce(v => ctx.change(bk => { bk.memo = v; }, null, { render: false }), 500);
+  // 書いた中の URL と電話番号は、下にボタンで出してタップで開けるようにする
+  const links = h('div', { class: 'memo-links' });
+  const drawLinks = v => {
+    const found = [...linkify(v).querySelectorAll('a')];
+    links.replaceChildren(...found.map(a => {
+      a.className = 'mbtn';
+      a.prepend(icon(a.classList.contains('tel') || a.href.startsWith('tel:') ? 'phone' : 'globe'));
+      return a;
+    }));
+  };
+  drawLinks(memo);
+  const save = debounce(v => {
+    ctx.change(bk => { bk.memo = v; }, null, { render: false });
+    drawLinks(v);
+  }, 500);
   ta.addEventListener('input', () => save(ta.value));
+  ta.addEventListener('blur', () => save.flush(ta.value));
   ctx.onLeave(() => save.flush(ta.value));
-  return h('div', { class: 'pg' }, head, ta,
-    h('div', { class: 'btn-row end' }, btn('できた', () => { save.flush(ta.value); ui.memoEditing = false; ctx.refresh(); }, 'pri')));
+  return h('div', { class: 'pg' }, head, ta, links);
 }

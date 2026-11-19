@@ -1,4 +1,4 @@
-// 栞の中身を直す小窓たち
+// しおりの中身を直す小窓たち
 // ctx … book.js が渡す { book, readOnly, change(fn, msg), goTo(key, opts) }
 
 import { h, icon, linkify, extLink, fmtMD, isUrl, normTime, toMin, isDate, diffDays, fmtDuration } from './util.js';
@@ -44,7 +44,7 @@ export function editStop(ctx, di, idx = null, preset = {}) {
     for (const k in rIn) delete rIn[k];
     rsvBox.replaceChildren();
     if (!hasRsv) {
-      rsvBox.append(btn('予約を付ける', () => { hasRsv = true; drawRsv(); }, 'quiet', 'ticket'));
+      rsvBox.append(btn('予約情報の入力', () => { hasRsv = true; drawRsv(); }, 'quiet', 'ticket'));
       return;
     }
     rIn.number = textInput({ value: r.number || '', placeholder: 'AB12345', autocomplete: 'off' });
@@ -129,8 +129,8 @@ export function editStop(ctx, di, idx = null, preset = {}) {
     field('ラベル', labelChips),
     h('div', { class: 'row2' }, field('開始', start), field('終了', end)),
     field('メモ', memo),
-    field('サイト', site, 'あれば箱に「サイト」ボタンが出ます'),
-    field('地図', map, 'あれば箱に「地図」ボタンが出ます'),
+    field('サイト', site),
+    field('地図', map),
     rsvBox,
     err,
   ];
@@ -352,7 +352,7 @@ export function editPattern(ctx) {
   openSheet({
     title: '柄と色',
     body: [h('div', { class: 'sec-l' }, '柄'), grid, h('div', { class: 'sec-l' }, '色'), dots,
-      h('p', { class: 'note' }, '色は栞全体のアクセント色（タブ・見出し・ボタン）にもなります。')],
+      h('p', { class: 'note' }, '色はしおり全体のアクセント色（タブ・見出し・ボタン）にもなります。')],
     actions: [btn('できた', () => closeSheet(), 'pri')],
     className: 'pattern-sheet',
   });
