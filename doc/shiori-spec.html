@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>旅のしおり 仕様書</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* 読み物の1カラム＋各節の右に画面見本（狭い画面では縦に積む） */
+  --bg:#F1F3F6;--surface:#FFFFFF;--ink:#1C2230;--muted:#5B6476;--line:#D8DDE6;
+  --accent:#3D5E8E;--accent-soft:#E3EAF4;--warn:#7E520A;--warn-soft:#F8EBD2;
+  --display:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Noto Sans JP","Noto Sans CJK JP",sans-serif;
+  --body:"Noto Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans CJK JP",system-ui,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color-scheme:light;
+  --kaki:#C9784F;--yamabuki:#D3A541;--wakakusa:#8DAE5E;--seiji:#6FAA9C;--ai:#5677A8;--fuji:#9787C2;--sakura:#D3909F;--nezumi:#8E8C88;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#111419;--surface:#191D24;--ink:#E5E8EE;--muted:#9AA3B3;--line:#2B313C;--accent:#8EAEDD;--accent-soft:#1E2A3C;--warn:#E8B867;--warn-soft:#33281A;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#111419;--surface:#191D24;--ink:#E5E8EE;--muted:#9AA3B3;--line:#2B313C;--accent:#8EAEDD;--accent-soft:#1E2A3C;--warn:#E8B867;--warn-soft:#33281A;color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-padding-top:64px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15.5px;line-height:1.85;-webkit-text-size-adjust:100%}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px 96px}
+header.top{padding:52px 0 28px}
+.eyebrow{font-size:13px;color:var(--muted);letter-spacing:.04em;font-variant-numeric:tabular-nums}
+h1{font-family:var(--display);font-size:clamp(32px,5.4vw,46px);font-weight:700;line-height:1.25;margin:6px 0 12px;text-wrap:balance}
+.lede{max-width:38em;color:var(--muted);margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.chip{font-size:13px;line-height:1.6;padding:4px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line)}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:2px 16px;margin:28px 0 0;padding:16px 18px;background:var(--surface);border:1px solid var(--line);border-radius:14px;font-size:14px;list-style:none}
+.toc a{text-decoration:none;color:var(--ink);display:flex;gap:10px;padding:3px 0}
+.toc a span{color:var(--accent);font-variant-numeric:tabular-nums;min-width:1.6em}
+.viewbar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:10px 0;font-size:13px;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--surface)}
+.seg button{font:inherit;font-size:13px;border:0;background:transparent;color:var(--muted);padding:5px 14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+section{padding:44px 0 8px}
+h2{font-family:var(--display);font-size:25px;font-weight:700;line-height:1.4;margin:0 0 18px;display:flex;gap:12px;align-items:baseline;text-wrap:balance}
+h2 .num{font-family:var(--body);font-size:14px;font-weight:500;color:var(--accent);font-variant-numeric:tabular-nums}
+h3{font-size:16.5px;font-weight:700;margin:26px 0 6px}
+p{margin:8px 0}
+.split{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:44px;align-items:start}
+@media (max-width:880px){.split{grid-template-columns:minmax(0,1fr)}}
+.prose{max-width:38em}
+ul.spec{padding-left:1.2em;margin:6px 0}
+ul.spec li{margin:5px 0}
+ul.spec li::marker{color:var(--muted)}
+.st{display:inline-block;font-size:12px;line-height:1.7;padding:0 8px;border-radius:6px;margin-right:6px;vertical-align:1px;white-space:nowrap}
+.st.chk{background:var(--warn-soft);color:var(--warn)}
+.note{font-size:14px;color:var(--muted)}
+code{font-family:var(--mono);font-size:.86em;background:var(--accent-soft);padding:1px 6px;border-radius:5px;word-break:break-all}
+table.fields{width:100%;border-collapse:collapse;font-size:14.5px;margin:10px 0}
+table.fields th,table.fields td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+table.fields th{font-weight:500;color:var(--muted);font-size:13px}
+table.fields td:first-child{white-space:nowrap;font-weight:500}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.cols2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px 28px}
+
+.flow{display:grid;grid-template-columns:minmax(0,1fr) 92px minmax(0,1.2fr) 92px minmax(0,1fr);gap:10px;align-items:center;margin:18px 0 10px}
+.node{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;line-height:1.6}
+.node b{display:block;font-size:15px}
+.node small{display:block;color:var(--muted);font-size:13px}
+.node.main{border:2px solid var(--accent)}
+.arr{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.5}
+.arr .g{display:block;font-size:20px;color:var(--accent)}
+.arr .v{display:none}
+.flow-under{display:grid;grid-template-columns:minmax(0,1fr) 92px minmax(0,1.2fr) 92px minmax(0,1fr);gap:10px}
+.flow-under .node{grid-column:3 / 6}
+@media (max-width:760px){
+  .flow,.flow-under{grid-template-columns:minmax(0,1fr)}
+  .flow-under .node{grid-column:auto}
+  .arr .h{display:none}.arr .v{display:block}
+}
+
+.ico{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px;flex:none}
+.ico.fill{fill:currentColor;stroke:none}
+
+.mock{--a-bg:#15171C;--a-sf:#1F2229;--a-sf2:#282C34;--a-tx:#E7E8EB;--a-mu:#9A9FAA;--a-ln:#353A43;--a-base:#14161A;--a-dim:rgba(0,0,0,.55);--hue:var(--seiji);
+  --a-acc:color-mix(in srgb,var(--hue) 72%,#fff);--a-acc-soft:color-mix(in srgb,var(--hue) 24%,transparent);--a-on:#101215}
+.mock.light{--a-bg:#F3F4F6;--a-sf:#FFFFFF;--a-sf2:#ECEEF1;--a-tx:#1E2128;--a-mu:#666E7D;--a-ln:#DADDE3;--a-base:#FFFFFF;--a-dim:rgba(20,24,30,.38);
+  --a-acc:color-mix(in srgb,var(--hue) 68%,#000);--a-acc-soft:color-mix(in srgb,var(--hue) 18%,transparent);--a-on:#FFFFFF}
+.phone{width:320px;max-width:100%;margin:0 auto;padding:9px;border-radius:40px;background:#0A0B0E;border:1px solid var(--line)}
+.screen{position:relative;height:640px;border-radius:32px;overflow:hidden;background:var(--a-bg);color:var(--a-tx);font-family:var(--body);font-size:13.5px;line-height:1.5}
+.cap{font-size:13px;color:var(--muted);text-align:center;margin:10px 0 0}
+.pad{padding:26px 16px 16px}
+.with-tabs .pad{padding-right:38px}
+.tabs{position:absolute;right:0;top:84px;display:flex;flex-direction:column;gap:4px;z-index:2}
+.tab{writing-mode:vertical-rl;font-size:11px;letter-spacing:.12em;padding:9px 4px;background:var(--a-sf2);color:var(--a-mu);border-radius:7px 0 0 7px;min-width:24px;text-align:center}
+.tab.on{background:var(--a-acc);color:var(--a-on)}
+.m-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:14px}
+.m-h{font-family:var(--display);font-size:20px;font-weight:700;line-height:1.3}
+.m-sub{font-size:12px;color:var(--a-mu)}
+.m-btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;line-height:1.3;padding:6px 10px;border-radius:9px;border:1px solid var(--a-ln);color:var(--a-tx);background:var(--a-sf);white-space:nowrap}
+.m-btn.pri{background:var(--a-acc);color:var(--a-on);border-color:transparent}
+.m-btn.quiet{color:var(--a-mu)}
+.lbl{display:inline-block;font-size:10.5px;line-height:1.6;padding:0 7px;border-radius:6px;background:var(--a-sf2);color:var(--a-mu);margin-right:6px;vertical-align:1px}
+.m-sec{font-size:11.5px;color:var(--a-mu);margin:16px 0 6px;letter-spacing:.04em}
+
+.tl{display:grid;grid-template-columns:36px minmax(0,1fr);column-gap:7px}
+.tl-t{font-size:12.5px;text-align:right;font-variant-numeric:tabular-nums;padding-top:11px;line-height:1.35}
+.tl-t small{display:block;color:var(--a-mu);font-size:11px}
+.card{background:var(--a-sf);border:1px solid var(--a-ln);border-radius:12px;padding:9px 11px}
+.card.now{border:2px solid var(--a-acc);padding:8px 10px}
+.now-tag{font-size:10.5px;color:var(--a-acc);margin-bottom:2px;letter-spacing:.04em}
+.c-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.c-nm{font-size:14px;font-weight:500;min-width:0}
+.c-memo{font-size:11.5px;color:var(--a-mu);margin-top:4px}
+.c-btns{display:flex;gap:6px;margin-top:8px}
+.card .m-btn{padding:4px 7px;font-size:11.5px;gap:3px}
+.move{margin:0 0 0 16px;border-left:2px dotted var(--a-ln);padding:7px 0 7px 14px;font-size:11.5px;color:var(--a-mu);line-height:1.55}
+
+.cv{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--a-ln);display:flex;align-items:flex-end;padding:9px}
+.daisen{position:relative;z-index:1;background:var(--a-sf);border:1px solid var(--a-ln);border-radius:8px;padding:7px 9px;width:100%}
+.daisen b{font-family:var(--display);font-weight:700;display:block;font-size:13px;line-height:1.35}
+.daisen small{display:block;font-size:10.5px;color:var(--a-mu)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.newcv{border:1.5px dashed var(--a-ln);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--a-mu);font-size:12px}
+.shelf-link{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding:11px 12px;background:var(--a-sf);border:1px solid var(--a-ln);border-radius:12px;font-size:13px}
+
+.pat{--ln:color-mix(in srgb,var(--hue) 52%,transparent);--ln2:color-mix(in srgb,var(--hue) 30%,transparent);background-color:color-mix(in srgb,var(--hue) 26%,var(--a-base))}
+.mock.light .pat{--ln:color-mix(in srgb,var(--hue) 46%,transparent);--ln2:color-mix(in srgb,var(--hue) 24%,transparent);background-color:color-mix(in srgb,var(--hue) 16%,var(--a-base))}
+.p-check{background-image:conic-gradient(var(--ln) 25%,transparent 0 50%,var(--ln) 0 75%,transparent 0);background-size:22px 22px}
+.p-gingham{background-image:repeating-linear-gradient(0deg,var(--ln2) 0 9px,transparent 9px 18px),repeating-linear-gradient(90deg,var(--ln2) 0 9px,transparent 9px 18px)}
+.p-stripe{background-image:repeating-linear-gradient(90deg,var(--ln) 0 6px,transparent 6px 18px)}
+.p-border{background-image:repeating-linear-gradient(0deg,var(--ln) 0 7px,transparent 7px 19px)}
+.p-dot{background-image:radial-gradient(var(--ln) 2.6px,transparent 3.1px),radial-gradient(var(--ln) 2.6px,transparent 3.1px);background-size:18px 18px;background-position:0 0,9px 9px}
+.p-grid{background-image:linear-gradient(var(--ln) 1px,transparent 1px),linear-gradient(90deg,var(--ln) 1px,transparent 1px);background-size:14px 14px}
+.p-diagonal{background-image:repeating-linear-gradient(45deg,var(--ln) 0 2px,transparent 2px 10px)}
+.p-wave::before{content:"";position:absolute;inset:0;background:var(--ln);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='14'%3E%3Cpath d='M0 7 Q8 1 16 7 T32 7' fill='none' stroke='black' stroke-width='2'/%3E%3C/svg%3E") 0 0/32px 14px repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='14'%3E%3Cpath d='M0 7 Q8 1 16 7 T32 7' fill='none' stroke='black' stroke-width='2'/%3E%3C/svg%3E") 0 0/32px 14px repeat}
+.p-wave{position:relative}
+
+.cover-scr{position:absolute;inset:0}
+.cover-plate{position:absolute;left:20px;right:44px;top:200px;z-index:1;background:var(--a-sf);border:1px solid var(--a-ln);border-radius:12px;padding:16px 16px 14px}
+.cover-plate b{display:block;font-family:var(--display);font-weight:700;font-size:23px;line-height:1.35}
+.cover-plate .d{font-size:13px;margin-top:6px;font-variant-numeric:tabular-nums}
+.cover-plate .s{font-size:12px;color:var(--a-mu);margin-top:6px;padding-top:8px;border-top:1px solid var(--a-ln)}
+.flip-hint{position:absolute;left:20px;bottom:22px;z-index:1;font-size:11px;color:var(--a-mu);background:var(--a-sf);border:1px solid var(--a-ln);border-radius:999px;padding:3px 10px}
+
+.irow{display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid var(--a-ln);font-size:13.5px}
+.irow .ico{color:var(--a-mu)}
+.addbox{margin-top:12px;border:1px dashed var(--a-ln);border-radius:10px;padding:9px 11px;color:var(--a-mu);font-size:12.5px;display:flex;align-items:center;gap:6px}
+
+.dim{position:absolute;inset:0;background:var(--a-dim);z-index:3}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:4;background:var(--a-sf);border-radius:22px 22px 0 0;border-top:1px solid var(--a-ln);padding:10px 18px 24px}
+.grab{width:38px;height:4px;border-radius:2px;background:var(--a-ln);margin:0 auto 14px}
+.kv{display:grid;grid-template-columns:84px minmax(0,1fr);gap:10px 10px;font-size:13px;margin:14px 0 0;align-items:center}
+.kv dt{color:var(--a-mu);font-size:12px}
+.kv dd{margin:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-variant-numeric:tabular-nums}
+
+.fchips{display:flex;gap:6px;margin-bottom:6px}
+.fc{font-size:12px;padding:4px 11px;border-radius:999px;border:1px solid var(--a-ln);color:var(--a-mu);display:inline-flex;align-items:center;gap:4px}
+.fc.on{background:var(--a-acc-soft);color:var(--a-acc);border-color:transparent}
+.srow{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--a-ln)}
+.when{font-size:10.5px;color:var(--a-mu);width:40px;line-height:1.35;flex:none;font-variant-numeric:tabular-nums}
+.s-nm{flex:1;min-width:0;font-size:13px}
+.rv{font-size:10.5px;padding:0 6px;border-radius:6px;background:var(--a-acc-soft);color:var(--a-acc);flex:none;line-height:1.7}
+.srow .ico{color:var(--a-mu)}
+.wish-open{background:var(--a-sf);border:1px solid var(--a-ln);border-radius:10px;padding:8px 10px;margin:6px 0}
+
+.sw-panel{border-radius:16px;padding:18px;background:var(--a-bg);color:var(--a-tx);border:1px solid var(--line);margin-top:20px}
+.sw-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px}
+@media (max-width:700px){.sw-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.sw{aspect-ratio:3/4;border-radius:9px;border:1px solid var(--a-ln);position:relative;overflow:hidden}
+.sw-l{font-size:12px;text-align:center;margin-top:5px;color:var(--a-mu)}
+.dots{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;font-size:12px;color:var(--a-mu)}
+.dots span{display:inline-flex;align-items:center;gap:6px}
+.dots i{width:14px;height:14px;border-radius:50%;display:inline-block}
+
+.notdo{columns:2 260px;column-gap:32px}
+footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"/></symbol>
+  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 9V7a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a3 3 0 0 0 0 6v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-2a3 3 0 0 0 0-6z"/></symbol>
+  <symbol id="i-car" viewBox="0 0 24 24"><path d="M5 15l1.4-4.7A2 2 0 0 1 8.3 9h7.4a2 2 0 0 1 1.9 1.3L19 15"/><rect x="3.5" y="14" width="17" height="4" rx="1.5"/><circle cx="7.5" cy="19.2" r="1.2"/><circle cx="16.5" cy="19.2" r="1.2"/></symbol>
+  <symbol id="i-grip" viewBox="0 0 24 24"><circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 7l8.5 6 8.5-6"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></symbol>
+</svg>
+
+<div class="wrap">
+<header class="top">
+  <div class="eyebrow">仕様書 第1版 · 2026-11-19</div>
+  <h1>旅のしおり</h1>
+  <p class="lede">家族旅行の栞を作って、旅行中に見て、その場で予定を変えられる個人用ツール。この仕様書は会議で決めたことをまとめたもので、Claude Code はこれと <code>FORMAT.md</code> をもとに作る。</p>
+  <div class="chips">
+    <span class="chip">GitHub Pages に置く静的サイト</span>
+    <span class="chip">iPhone のホーム画面に追加して使う</span>
+    <span class="chip">データは自分の iPhone の中</span>
+    <span class="chip">ダークモードが基本</span>
+  </div>
+  <ol class="toc">
+    <li><a href="#rules"><span>1</span>大事にすること</a></li>
+    <li><a href="#overview"><span>2</span>全体の仕組み</a></li>
+    <li><a href="#shelf"><span>3</span>本棚と思い出の棚</a></li>
+    <li><a href="#inside"><span>4</span>栞の中の共通ルール</a></li>
+    <li><a href="#cover"><span>5</span>表紙</a></li>
+    <li><a href="#packing"><span>6</span>持ち物</a></li>
+    <li><a href="#itinerary"><span>7</span>行程</a></li>
+    <li><a href="#reservation"><span>8</span>予約</a></li>
+    <li><a href="#spots"><span>9</span>立ち寄り先</a></li>
+    <li><a href="#memo"><span>10</span>メモ</a></li>
+    <li><a href="#data"><span>11</span>保存とバックアップ</a></li>
+    <li><a href="#share"><span>12</span>夫に送る</a></li>
+    <li><a href="#claude"><span>13</span>Claude とのやりとり</a></li>
+    <li><a href="#verify"><span>14</span>作るときに実機で確かめること</a></li>
+    <li><a href="#notdo"><span>15</span>やらないこと</a></li>
+  </ol>
+</header>
+
+<div class="viewbar">
+  <span id="seg-label">画面見本の表示</span>
+  <div class="seg" role="group" aria-labelledby="seg-label">
+    <button type="button" id="btn-dark" aria-pressed="true">ダーク</button>
+    <button type="button" id="btn-light" aria-pressed="false">ライト</button>
+  </div>
+</div>
+
+<section id="rules">
+  <h2><span class="num">1</span>大事にすること</h2>
+  <div class="prose">
+    <ul class="spec">
+      <li><b>主役は旅行中。</b>開いたらすぐ「今どこか」がわかって、予定はその場で気軽に変えられる。</li>
+      <li><b>書いても書かなくてもいい。</b>必須は名前だけ（栞のタイトル、立ち寄りの名前、いけたらいくの名前）。それ以外は全部空けてよく、空いている欄やボタンは画面に出さない。計画は楽しく、義務にはしない。</li>
+      <li><b>作るのは自分だけ。</b>夫には送ったリンクで見てもらうだけで、夫の側には何も保存しない。</li>
+      <li><b>ダークモードが基本。</b>ライトモードも同じ手間で整える。iPhone の設定に合わせて切り替わる。</li>
+      <li><b>見た目は旅行アプリのようにすっきり。</b>ただし表紙とページめくりで栞らしさを出す。紙に寄せすぎない。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="overview">
+  <h2><span class="num">2</span>全体の仕組み</h2>
+  <div class="flow" role="img" aria-label="Claudeと自分のiPhoneの栞はJSONでやりとりし、栞はLINEのリンクで夫のiPhoneに送る。持ち物はコピーしてリマインダーに貼る。">
+    <div class="node"><b>Claude</b><small>旅の相談（プロジェクト）</small></div>
+    <div class="arr"><span class="g h">⇄</span><span class="g v">⇅</span>JSON で<br>書き出し・読み込み</div>
+    <div class="node main"><b>自分の iPhone</b><small>栞の原本。作る・直す・見る</small></div>
+    <div class="arr"><span class="g h">→</span><span class="g v">↓</span>LINE で<br>リンクを送る</div>
+    <div class="node"><b>夫の iPhone</b><small>見るだけ。保存しない</small></div>
+  </div>
+  <div class="flow-under">
+    <div class="node"><b>リマインダー（各自の iPhone）</b><small>持ち物は「リマインダー用にコピー」→ リストに貼ると1行1項目になる。チェックはここでする。</small></div>
+  </div>
+  <div class="prose">
+    <ul class="spec">
+      <li>サーバーもログインもない。GitHub Pages のサイトを iPhone のホーム画面に追加して、アプリのように使う（PWA。電波がなくても開ける）。</li>
+      <li>栞のデータは自分の iPhone の中だけにある。1冊の栞＝ <code>FORMAT.md</code> の形の JSON ひとかたまり。Claude とのやりとり、バックアップ、夫に送るリンクの中身も全部この同じ形。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="shelf">
+  <h2><span class="num">3</span>本棚と思い出の棚</h2>
+  <div class="split">
+    <div class="prose">
+      <p>アプリを開いたときのホーム画面。栞の表紙を並べた本棚。</p>
+      <ul class="spec">
+        <li>表紙を2列で並べる。冊数は多くならないので、背表紙ではなく表紙で見せる。</li>
+        <li>旅行中の栞（今日が開始日〜終了日に入っている栞）があれば一番上に大きく出す。タップでその日の行程ページへ。</li>
+        <li>その下に計画中の栞。開始日が近い順、日付のない栞は最後。「新しい栞」ボタンは上に置く。</li>
+        <li>一番下に「思い出の棚（n冊）」の入口。タップすると別の画面で、済みにした栞が並ぶ。</li>
+        <li>「済み」はただの分類で、いつでも付けたり外したりできる。済みにすると思い出の棚へ移り、外すと本棚に戻る。済みにしても編集はできる（ロックしない）。ハンコなどの印は付けない。</li>
+        <li>右上のメニュー：Claude から読み込む（新しい栞として）、全部まとめてバックアップ、バックアップから戻す。</li>
+      </ul>
+      <h3>新しい栞を作るとき</h3>
+      <ul class="spec">
+        <li>入れるのはタイトルだけでいい。日付、表紙の柄と色はあとからでも変えられる。</li>
+        <li>持ち物を前の栞からコピーするか選ぶ（<a href="#packing">6 持ち物</a>）。</li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div class="mock"><div class="phone"><div class="screen"><div class="pad">
+        <div class="m-head"><span class="m-h">本棚</span><span style="display:inline-flex;align-items:center;gap:10px"><span class="m-btn"><svg class="ico"><use href="#i-plus"/></svg>新しい栞</span><svg class="ico fill" style="color:var(--a-mu)"><use href="#i-more"/></svg></span></div>
+        <div class="m-sec">旅行中</div>
+        <div class="cv pat p-gingham" style="--hue:var(--seiji);height:150px;flex-direction:column;align-items:stretch;justify-content:flex-end;gap:8px">
+          <div class="daisen"><b>〇〇温泉 1泊2日</b><small>11/21（土）〜 11/22（日）</small></div>
+          <span class="m-btn pri" style="position:relative;z-index:1;justify-content:center">今日の行程へ<svg class="ico"><use href="#i-chev"/></svg></span>
+        </div>
+        <div class="m-sec">計画中</div>
+        <div class="grid2">
+          <div class="cv pat p-dot" style="--hue:var(--yamabuki);height:178px"><div class="daisen"><b>△△の海</b><small>1/9 〜 1/10</small></div></div>
+          <div class="cv pat p-stripe" style="--hue:var(--fuji);height:178px"><div class="daisen"><b>□□キャンプ</b><small>日付未定</small></div></div>
+        </div>
+        <div class="shelf-link"><span>思い出の棚</span><span style="color:var(--a-mu);display:inline-flex;align-items:center;gap:4px">3冊<svg class="ico"><use href="#i-chev"/></svg></span></div>
+      </div></div></div></div>
+      <figcaption class="cap">本棚（ホーム）</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="inside">
+  <h2><span class="num">4</span>栞の中の共通ルール</h2>
+  <div class="prose">
+    <ul class="spec">
+      <li>ページの順番：<b>表紙 → 持ち物 → 1日目 … n日目 → 立ち寄り先 → メモ</b>。日数は開始日〜終了日から決まる。日付がなければ日を手で足せる。</li>
+      <li>左右のスワイプで紙をめくるような演出でページが変わる。ページの中は縦にスクロールできる（紙なのに縦に伸びるのは気にしない）。動きを減らす設定の iPhone では、めくりの演出を控えめにする。</li>
+      <li>画面の右端に縦書きのインデックスタブ。タップでそのページへ一発で飛ぶ。今いるページのタブは栞の色。</li>
+      <li>並べ替えは、行の左の「つまみ」を掴んだときだけ動く。ページめくりのスワイプとぶつからないようにするため。</li>
+      <li>栞を開いたとき：旅行中なら今日の行程ページから。それ以外は表紙から。</li>
+      <li>表紙で選んだ色が、その栞全体のアクセント色になる（タブ、見出し、「いまここ」の枠、ボタン）。</li>
+      <li>栞のメニュー：Claude 用に書き出す、Claude から読み込む（置き換え・いけたらいくだけ足す）、置き換える前に戻す、夫に送る、済みにする／外す、栞を消す。</li>
+      <li>文字は、タイトルと見出しだけ丸ゴシック（例：Zen Maru Gothic）で少し柔らかく、本文はふつうのゴシックで読みやすく。フォントはオフラインでも使えるようにキャッシュする。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="cover">
+  <h2><span class="num">5</span>表紙</h2>
+  <div class="split">
+    <div class="prose">
+      <ul class="spec">
+        <li>背景は柄8種類 × 色8色から選ぶ（64通り）。写真や画像は使わず、CSS で描く。データには柄と色の名前だけが入るので、夫に送るリンクにもそのまま載る。</li>
+        <li>柄：チェック、ギンガム、ストライプ、ボーダー、水玉、方眼、波線、斜線。</li>
+        <li>色：柿、山吹、若草、青磁、藍、藤、桜、鼠。ダークモードでは柄を暗く沈めて、眩しくならないようにする。</li>
+        <li>載せるもの：タイトル、日付、行き先、ひとこと。タイトル以外は空でよく、空なら出さない。</li>
+        <li>文字は本の題箋のような札に載せる。どの柄の上でも読めるようにするため。</li>
+        <li>表紙のメニューから、柄と色を変える、済みにする／外す。</li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div class="mock"><div class="phone"><div class="screen with-tabs">
+        <div class="cover-scr pat p-gingham" style="--hue:var(--seiji)"></div>
+        <div class="tabs" aria-hidden="true"><span class="tab on">表紙</span><span class="tab">持ち物</span><span class="tab">1日目</span><span class="tab">2日目</span><span class="tab">立ち寄り</span><span class="tab">メモ</span></div>
+        <div class="cover-plate">
+          <b>〇〇温泉 1泊2日</b>
+          <div class="d">11月21日（土）〜 22日（日）</div>
+          <div class="s">〇〇温泉 ／ 紅葉がまだ残っていますように</div>
+        </div>
+        <div class="flip-hint">左へめくると持ち物</div>
+      </div></div></div>
+      <figcaption class="cap">表紙（右端がインデックスタブ）</figcaption>
+    </figure>
+  </div>
+  <div class="mock sw-panel">
+    <div class="sw-grid">
+      <div><div class="sw pat p-check" style="--hue:var(--kaki)"></div><div class="sw-l">チェック</div></div>
+      <div><div class="sw pat p-gingham" style="--hue:var(--seiji)"></div><div class="sw-l">ギンガム</div></div>
+      <div><div class="sw pat p-stripe" style="--hue:var(--fuji)"></div><div class="sw-l">ストライプ</div></div>
+      <div><div class="sw pat p-border" style="--hue:var(--ai)"></div><div class="sw-l">ボーダー</div></div>
+      <div><div class="sw pat p-dot" style="--hue:var(--yamabuki)"></div><div class="sw-l">水玉</div></div>
+      <div><div class="sw pat p-grid" style="--hue:var(--nezumi)"></div><div class="sw-l">方眼</div></div>
+      <div><div class="sw pat p-wave" style="--hue:var(--wakakusa)"></div><div class="sw-l">波線</div></div>
+      <div><div class="sw pat p-diagonal" style="--hue:var(--sakura)"></div><div class="sw-l">斜線</div></div>
+    </div>
+    <div class="dots">
+      <span><i style="background:var(--kaki)"></i>柿</span>
+      <span><i style="background:var(--yamabuki)"></i>山吹</span>
+      <span><i style="background:var(--wakakusa)"></i>若草</span>
+      <span><i style="background:var(--seiji)"></i>青磁</span>
+      <span><i style="background:var(--ai)"></i>藍</span>
+      <span><i style="background:var(--fuji)"></i>藤</span>
+      <span><i style="background:var(--sakura)"></i>桜</span>
+      <span><i style="background:var(--nezumi)"></i>鼠</span>
+    </div>
+  </div>
+  <p class="note">柄と色の見本。色の値は叩き台（柿 #C9784F／山吹 #D3A541／若草 #8DAE5E／青磁 #6FAA9C／藍 #5677A8／藤 #9787C2／桜 #D3909F／鼠 #8E8C88）。</p>
+</section>
+
+<section id="packing">
+  <h2><span class="num">6</span>持ち物</h2>
+  <div class="split">
+    <div class="prose">
+      <ul class="spec">
+        <li>分類なし。1行1項目のシンプルなリスト。その場で追加・名前の修正・削除・並べ替え（つまみ）ができる。</li>
+        <li>まとめて追加：改行区切りのテキストを貼ると、1行ずつ別の項目として入る。Claude と洗い出したリストもこれで一気に入れられる。</li>
+        <li><b>リマインダー用にコピー：</b>「・」や「-」などの記号を付けず、項目名だけを改行区切りでコピーする。iPhone のリマインダーのリストに貼ると1行1項目になる（実機で確認済み。メモアプリはチェックリストにならなかったのでリマインダーを使う）。</li>
+        <li>栞の中ではチェックしない。チェックはリマインダーでする。</li>
+        <li>テンプレの仕組みは作らない。新しい栞を作るときに「前の栞から持ち物をコピー」する。コピー元は選べて、初期値は直近の栞。取り込む前に一覧が出て、今回いらない物は外してから取り込める。</li>
+        <li>夫に送った栞の持ち物ページにも、同じコピーボタンを置く。</li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div class="mock"><div class="phone"><div class="screen with-tabs">
+        <div class="tabs" aria-hidden="true"><span class="tab">表紙</span><span class="tab on">持ち物</span><span class="tab">1日目</span><span class="tab">2日目</span><span class="tab">立ち寄り</span><span class="tab">メモ</span></div>
+        <div class="pad">
+          <div class="m-head"><span class="m-h">持ち物</span><span class="m-sub">9個</span></div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+            <span class="m-btn pri"><svg class="ico"><use href="#i-copy"/></svg>リマインダー用にコピー</span>
+            <span class="m-btn"><svg class="ico"><use href="#i-plus"/></svg>まとめて追加</span>
+          </div>
+          <div class="irow"><svg class="ico fill"><use href="#i-grip"/></svg>着替え</div>
+          <div class="irow"><svg class="ico fill"><use href="#i-grip"/></svg>部屋着</div>
+          <div class="irow"><svg class="ico fill"><use href="#i-grip"/></svg>歯ブラシ</div>
+          <div class="irow"><svg class="ico fill"><use href="#i-grip"/></svg>タオル</div>
+          <div class="irow"><svg class="ico fill"><use href="#i-grip"/></svg>充電器</div>
+          <div class="irow"><svg class="ico fill"><use href="#i-grip"/></svg>モバイルバッテリー</div>
+          <div class="irow"><svg class="ico fill"><use href="#i-grip"/></svg>保険証</div>
+          <div class="irow"><svg class="ico fill"><use href="#i-grip"/></svg>ビニール袋</div>
+          <div class="irow"><svg class="ico fill"><use href="#i-grip"/></svg>ウェットティッシュ</div>
+          <div class="addbox"><svg class="ico"><use href="#i-plus"/></svg>持ち物を追加</div>
+        </div>
+      </div></div></div>
+      <figcaption class="cap">持ち物（左のつまみで並べ替え）</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="itinerary">
+  <h2><span class="num">7</span>行程</h2>
+  <div class="split">
+    <div class="prose">
+      <ul class="spec">
+        <li>1日1ページ。見出しは「n日目」と日付・曜日。</li>
+        <li>左に時刻、右に立ち寄りの箱、箱と箱の間に移動。<b>箱の高さは時間に比例させない</b>（中身に合わせる）。</li>
+        <li>旅行中は、今の時刻にあたる箱に「いまここ」と栞の色の枠を付ける（開始〜終了の間。終了がなければ次の予定の開始まで）。</li>
+      </ul>
+      <h3>立ち寄りの箱</h3>
+      <table class="fields">
+        <thead><tr><th>項目</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>名前</td><td>必須。施設名・場所名</td></tr>
+          <tr><td>ラベル</td><td>観光・あそぶ・食事・カフェ・買い物・休憩・泊まる・温泉から選ぶか、6文字以内で自由に書く</td></tr>
+          <tr><td>開始・終了</td><td>分単位できっちり入れる。どちらも空でよい。開始がない予定は並び順だけで置き、時刻欄は空ける。宿のチェックインなど終了のない予定も書ける</td></tr>
+          <tr><td>メモ</td><td>箱の中に小さく出す。URL と電話番号はタップで開ける・かけられる</td></tr>
+          <tr><td>地図</td><td>Google マップの共有リンク。あれば箱に「地図」ボタン、なければボタンを出さない（検索リンクを自動で作ることはしない）</td></tr>
+          <tr><td>予約</td><td>あれば箱に「予約」ボタン。<a href="#reservation">8 予約</a></td></tr>
+        </tbody>
+      </table>
+      <p class="note">サイトURLは箱には持たせない。</p>
+      <h3>移動</h3>
+      <ul class="spec">
+        <li>手段（初期値は車）と道のメモ（例：〇〇道経由）だけを入れる。</li>
+        <li>所要時間は、前の予定の終了時刻と次の予定の開始時刻から自動で出す。どちらかが空なら出さない。</li>
+        <li>ナビ開始ボタンは付けない。地図は立ち寄りの箱から開く。</li>
+      </ul>
+      <h3>旅行中に予定を変える</h3>
+      <ul class="spec">
+        <li><b>ここから後ろをずらす：</b>遅れたときに、選んだ予定から後ろ（その日の中）の時刻をまとめて何分かずらす。</li>
+        <li>予定の追加・削除・並べ替え（つまみ）・時刻の修正はその場でできる。</li>
+        <li>立ち寄り先ページの「いけたらいく」から行程に入れられる（<a href="#spots">9 立ち寄り先</a>）。</li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div class="mock"><div class="phone"><div class="screen with-tabs">
+        <div class="tabs" aria-hidden="true"><span class="tab">表紙</span><span class="tab">持ち物</span><span class="tab on">1日目</span><span class="tab">2日目</span><span class="tab">立ち寄り</span><span class="tab">メモ</span></div>
+        <div class="pad">
+          <div class="m-head"><span><span class="m-h">1日目</span><span class="m-sub" style="margin-left:8px">11/21（土）</span></span></div>
+          <div class="tl">
+            <div class="tl-t">10:00<small>11:00</small></div>
+            <div class="card now">
+              <div class="now-tag">いまここ</div>
+              <div class="c-top"><div class="c-nm"><span class="lbl">あそぶ</span>〇〇公園</div><span class="m-btn"><svg class="ico"><use href="#i-pin"/></svg>地図</span></div>
+              <div class="c-memo">駐車場は北口側</div>
+            </div>
+            <div></div>
+            <div class="move"><svg class="ico"><use href="#i-car"/></svg> 車 1時間・〇〇道経由<div style="margin-top:5px"><span class="m-btn quiet"><svg class="ico"><use href="#i-clock"/></svg>ここから後ろをずらす</span></div></div>
+            <div class="tl-t">12:00<small>12:30</small></div>
+            <div class="card"><div class="c-top"><div class="c-nm"><span class="lbl">買い物</span>イオン〇〇店</div><span class="m-btn"><svg class="ico"><use href="#i-pin"/></svg>地図</span></div></div>
+            <div></div>
+            <div class="move"><svg class="ico"><use href="#i-car"/></svg> 車</div>
+            <div class="tl-t" style="color:var(--a-mu)">–</div>
+            <div class="card"><div class="c-top"><div class="c-nm"><span class="lbl">休憩</span>道の駅〇〇</div></div><div class="c-memo">時間が合えば</div></div>
+            <div></div>
+            <div class="move"><svg class="ico"><use href="#i-car"/></svg> 車</div>
+            <div class="tl-t">15:00<small></small></div>
+            <div class="card">
+              <div class="c-nm"><span class="lbl">泊まる</span>〇〇旅館</div>
+              <div class="c-btns"><span class="m-btn"><svg class="ico"><use href="#i-ticket"/></svg>予約</span><span class="m-btn"><svg class="ico"><use href="#i-pin"/></svg>地図</span></div>
+            </div>
+          </div>
+        </div>
+      </div></div></div>
+      <figcaption class="cap">行程（3つ目は開始時刻なし、4つ目は終了時刻なし）</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="reservation">
+  <h2><span class="num">8</span>予約</h2>
+  <div class="split">
+    <div class="prose">
+      <ul class="spec">
+        <li>予約は立ち寄りにひもづく。施設名と日時は立ち寄りの箱から引くので、二重に入力しない。</li>
+        <li>行程の「予約」ボタンを押すと、下から小窓が出る。ページは移動しない。項目が少ないので折りたたみはなし。</li>
+        <li>予約の一覧は、立ち寄り先ページの「予約あり」で絞り込んで見る。</li>
+      </ul>
+      <table class="fields">
+        <thead><tr><th>項目</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>予約番号</td><td>コピーボタン付き</td></tr>
+          <tr><td>名義</td><td>誰の名前で予約したか</td></tr>
+          <tr><td>メール</td><td>予約番号から Gmail の検索リンクを自動で作る（例：<code>https://mail.google.com/mail/u/0/#search/AB12345</code>）。予約番号が空ならボタンを出さない。夫からの予約メールも転送されて自分の Gmail にある</td></tr>
+          <tr><td>チェックイン・チェックアウト</td><td>ラベルが「泊まる」の立ち寄りのときだけ出す</td></tr>
+          <tr><td>受付・集合時刻</td><td>「泊まる」以外の立ち寄りのときだけ出す</td></tr>
+          <tr><td>メモ</td><td>電話でしか予約できない店の番号など。URL と電話番号はタップできる</td></tr>
+        </tbody>
+      </table>
+      <p class="note">入れない項目：種類、人数、電話番号の欄、予約サイト、料金、支払い、食事、駐車場、部屋タイプ、キャンセル期限、コース。必要ならメモに書く。</p>
+    </div>
+    <figure style="margin:0">
+      <div class="mock"><div class="phone"><div class="screen">
+        <div class="pad" style="opacity:.9">
+          <div class="m-head"><span><span class="m-h">1日目</span><span class="m-sub" style="margin-left:8px">11/21（土）</span></span></div>
+          <div class="tl">
+            <div class="tl-t">12:00<small>12:30</small></div>
+            <div class="card"><div class="c-nm"><span class="lbl">買い物</span>イオン〇〇店</div></div>
+            <div></div><div class="move">車</div>
+            <div class="tl-t">15:00</div>
+            <div class="card"><div class="c-nm"><span class="lbl">泊まる</span>〇〇旅館</div></div>
+          </div>
+        </div>
+        <div class="dim"></div>
+        <div class="sheet">
+          <div class="grab"></div>
+          <div class="c-nm" style="font-size:16px"><span class="lbl">泊まる</span>〇〇旅館</div>
+          <div class="m-sub" style="margin-top:2px">11/21（土）15:00</div>
+          <dl class="kv">
+            <dt>予約番号</dt><dd><span style="font-family:var(--mono);font-size:13.5px">AB12345</span><span class="m-btn"><svg class="ico"><use href="#i-copy"/></svg>コピー</span></dd>
+            <dt>名義</dt><dd>〇〇</dd>
+            <dt>チェックイン</dt><dd>15:00</dd>
+            <dt>チェックアウト</dt><dd>10:00</dd>
+            <dt>メモ</dt><dd style="font-size:12.5px">夕食は18時から</dd>
+          </dl>
+          <div style="margin-top:16px"><span class="m-btn pri" style="width:100%;justify-content:center;padding:9px"><svg class="ico"><use href="#i-mail"/></svg>Gmail で予約メールを探す</span></div>
+        </div>
+      </div></div></div>
+      <figcaption class="cap">予約の小窓（行程の「予約」から）</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="spots">
+  <h2><span class="num">9</span>立ち寄り先</h2>
+  <div class="split">
+    <div class="prose">
+      <ul class="spec">
+        <li>行程の立ち寄りを全部、行程の順に並べる。日付や時刻の見出しで区切らず、各行に小さく「1日目 10:00」と添える。</li>
+        <li>行をタップすると、その日の行程ページの該当の箱へ飛ぶ。</li>
+        <li>絞り込み：すべて／予約あり。「予約あり」が予約一覧の代わり。</li>
+      </ul>
+      <h3>いけたらいく</h3>
+      <ul class="spec">
+        <li>ページの下の方に置く。名前だけで気軽に登録できる。サイトURLと地図URLは空でよい。</li>
+        <li>項目をタップすると「行程に入れる」が出る。何日目かを選ぶ（旅行中は今日が初期値）→ 時刻を入れる（空でよい）→ 時刻があればその位置に、なければその日の最後に入る。</li>
+        <li>行程に入れたら、いけたらいくの欄から消えて上の一覧に移る。サイトURLは箱には持たせないので、箱のメモに移す。</li>
+        <li>済みにしても、行かなかったいけたらいくはそのまま残す。</li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div class="mock"><div class="phone"><div class="screen with-tabs">
+        <div class="tabs" aria-hidden="true"><span class="tab">表紙</span><span class="tab">持ち物</span><span class="tab">1日目</span><span class="tab">2日目</span><span class="tab on">立ち寄り</span><span class="tab">メモ</span></div>
+        <div class="pad">
+          <div class="m-head"><span class="m-h">立ち寄り先</span></div>
+          <div class="fchips"><span class="fc on">すべて</span><span class="fc"><svg class="ico"><use href="#i-ticket"/></svg>予約あり</span></div>
+          <div class="srow"><span class="when">1日目<br>10:00</span><span class="s-nm"><span class="lbl">あそぶ</span>〇〇公園</span><svg class="ico"><use href="#i-pin"/></svg></div>
+          <div class="srow"><span class="when">1日目<br>12:00</span><span class="s-nm"><span class="lbl">買い物</span>イオン〇〇店</span><svg class="ico"><use href="#i-pin"/></svg></div>
+          <div class="srow"><span class="when">1日目</span><span class="s-nm"><span class="lbl">休憩</span>道の駅〇〇</span></div>
+          <div class="srow"><span class="when">1日目<br>15:00</span><span class="s-nm"><span class="lbl">泊まる</span>〇〇旅館</span><span class="rv">予約</span><svg class="ico"><use href="#i-pin"/></svg></div>
+          <div class="srow"><span class="when">2日目<br>11:30</span><span class="s-nm"><span class="lbl">食事</span>〇〇食堂</span><span class="rv">予約</span><svg class="ico"><use href="#i-pin"/></svg></div>
+          <div class="m-sec" style="margin-top:18px">いけたらいく</div>
+          <div class="wish-open">
+            <div style="display:flex;align-items:center;gap:8px"><span class="s-nm">〇〇ベーカリー</span><svg class="ico" style="color:var(--a-mu)"><use href="#i-globe"/></svg><svg class="ico" style="color:var(--a-mu)"><use href="#i-pin"/></svg></div>
+            <div style="margin-top:7px"><span class="m-btn pri"><svg class="ico"><use href="#i-plus"/></svg>行程に入れる</span></div>
+          </div>
+          <div class="srow" style="border-top:0"><span class="s-nm">〇〇の滝</span><svg class="ico"><use href="#i-pin"/></svg></div>
+          <div class="addbox"><svg class="ico"><use href="#i-plus"/></svg>お店や場所の名前（URLはあとからでも）</div>
+        </div>
+      </div></div></div>
+      <figcaption class="cap">立ち寄り先（予約一覧と、いけたらいく）</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="memo">
+  <h2><span class="num">10</span>メモ</h2>
+  <div class="prose">
+    <ul class="spec">
+      <li>栞ごとの自由なメモ欄。行程の箱のメモとは別。</li>
+      <li>中に書いた URL と電話番号はタップで開ける・かけられる（行程の箱のメモ、予約のメモも同じ）。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="data">
+  <h2><span class="num">11</span>保存とバックアップ</h2>
+  <div class="prose">
+    <ul class="spec">
+      <li>データは IndexedDB に保存する。栞1冊を <code>FORMAT.md</code> の形の JSON ひとかたまりとして持つ。将来、夫との同期を足したくなったら、保存先を差し替えるだけで済むようにしておく。</li>
+      <li>PWA にする（manifest と service worker）。ホーム画面から開けて、電波がなくても栞が見られる。</li>
+      <li>iPhone の Safari には、しばらく開かないサイトのデータを消す仕組みがある。自分の環境では今まで消えたことはないが、念のためホーム画面に追加して使う前提にして、バックアップも付ける。</li>
+      <li>バックアップ：本棚のメニューから、全部の栞をまとめて1つの JSON として書き出す（ファイルに保存、またはコピー）。同じものから戻せる。</li>
+      <li>Claude からの JSON で栞を置き換えるときは、置き換える前の状態を栞ごとに1つ控えておき、メニューから戻せるようにする。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="share">
+  <h2><span class="num">12</span>夫に送る</h2>
+  <div class="prose">
+    <ul class="spec">
+      <li>栞のメニューの「夫に送る」で、栞まるごとを JSON → 圧縮して、リンクの <code>#</code> 以降に入れる。iPhone の共有シートを開いて LINE で送る。</li>
+      <li><code>#</code> 以降はサーバーに送られないので、データはどこにも保存されない。リンクを知っている人なら見られるが、LINE で夫に送るだけなので問題にしない。</li>
+      <li>受け取った側は、同じサイトで栞を見るだけ。何も保存しない。見たいときはまたリンクを開く。上の方に「送られた栞（見るだけ）」とわかる帯を出す。</li>
+      <li>受け取り画面でも、持ち物の「リマインダー用にコピー」は使える。Gmail のボタン（自分のメールを開くもの）は出さない。</li>
+      <li>表紙は柄と色の名前だけ入るので、同じ表紙で見える。</li>
+      <li>リンクの中身は送った時点のもの。予定を変えたら送り直す。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="claude">
+  <h2><span class="num">13</span>Claude とのやりとり</h2>
+  <div class="prose">
+    <p>形式は JSON。項目の定義と Claude が守るルールは <code>FORMAT.md</code> にまとめてある。</p>
+    <div class="cols2">
+      <div class="box">
+        <h3 style="margin-top:0">書き出し</h3>
+        <p>今の栞を JSON にしてコピーする。Claude に貼って相談するため。</p>
+      </div>
+      <div class="box">
+        <h3 style="margin-top:0">読み込み（3種類）</h3>
+        <ul class="spec">
+          <li>新しい栞として（本棚のメニューから）</li>
+          <li>今の栞と置き換え（控えを1つ残す）</li>
+          <li>いけたらいくだけ足す</li>
+        </ul>
+      </div>
+    </div>
+    <ul class="spec">
+      <li>テキストの貼り付けが基本。ファイルからも読める。コードブロックの記号ごと貼っても読めるようにする。</li>
+      <li>読み込む前に中身の確認を出す（例：2日間・立ち寄り6件・予約1件・いけたらいく1件）。形がおかしいときは、どこがおかしいかを平易な言葉で出す。</li>
+      <li>旅行中の組み直しの流れ：栞で書き出し → Claude に貼って「雨なので2日目の午後を組み直して」→ 返ってきた JSON を「置き換え」で読み込む。</li>
+      <li>Claude 側は「旅の相談」用のプロジェクトを作り、<code>FORMAT.md</code> をナレッジに入れ、指示文（<code>FORMAT.md</code> の冒頭）を貼っておく。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="verify">
+  <h2><span class="num">14</span>作るときに実機で確かめること</h2>
+  <div class="prose">
+    <ul class="spec">
+      <li><span class="st chk">要確認</span>Gmail の検索リンクが、Gmail アプリと Safari のどちらで開くか。うまく開かなければ「予約番号をコピー → Gmail で検索」の形にする。</li>
+      <li><span class="st chk">要確認</span>夫に送るリンクの長さ。2泊くらいの栞を LINE で送って、途中で切れないか。</li>
+      <li><span class="st chk">要確認</span>ホーム画面から開いたときに、地図や Gmail のリンクがちゃんと外のアプリで開くか。</li>
+      <li><span class="st chk">要確認</span>ページめくりのスワイプと、縦スクロール・つまみでの並べ替えがぶつからないか。</li>
+      <li><span class="st chk">要確認</span>開始時刻なしの予定。使ってみて要らなければなくす。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="notdo">
+  <h2><span class="num">15</span>やらないこと</h2>
+  <div class="prose" style="max-width:none">
+    <ul class="spec notdo">
+      <li>夫との同期、夫の書き込み、ログインやアカウント</li>
+      <li>写真や画像の表紙</li>
+      <li>ナビ開始ボタン、地図の検索リンクの自動生成</li>
+      <li>栞の中での持ち物チェック、ショートカットアプリとの連携</li>
+      <li>持ち物の分類、テンプレの仕組み</li>
+      <li>立ち寄りの箱のサイトURL</li>
+      <li>予約の種類分け、人数・電話・料金・支払いなどの欄</li>
+      <li>済みのロック、済みのハンコ</li>
+      <li>緊急連絡先、天気</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  関連ファイル：<code>FORMAT.md</code>（栞の JSON 形式。リポジトリと Claude のプロジェクトのナレッジに置く）
+</footer>
+</div>
+
+<script>
+(function(){
+  var dark=document.getElementById('btn-dark'),light=document.getElementById('btn-light');
+  function set(isLight){
+    document.querySelectorAll('.mock').forEach(function(m){m.classList.toggle('light',isLight);});
+    dark.setAttribute('aria-pressed',String(!isLight));
+    light.setAttribute('aria-pressed',String(isLight));
+  }
+  dark.addEventListener('click',function(){set(false);});
+  light.addEventListener('click',function(){set(true);});
+})();
+</script>
+</body>
+</html>
