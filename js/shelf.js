@@ -1,7 +1,7 @@
 // 本棚（ホーム）と思い出の棚、新しい栞
 
 import { h, icon, clear, fmtRangeShort, todayStr, uid } from './util.js';
-import { openSheet, closeSheet, openMenu } from './ui.js';
+import { openSheet, closeSheet, openMenu, getTheme, setTheme } from './ui.js';
 import { field, textInput, btn, errorBox } from './forms.js';
 import { ensureCover, tidy, FORMAT, VERSION } from './format.js';
 import { isTraveling, todayIndex } from './itin.js';
@@ -108,7 +108,24 @@ function shelfMenu(nav) {
     },
     { label: '全部まとめてバックアップ', sub: 'ファイルに保存・コピー', icon: 'file', onSelect: () => openBackup() },
     { label: 'バックアップから戻す', icon: 'undo', onSelect: () => openRestore(() => nav.shelf()) },
+    { label: '画面の色', sub: THEMES.find(t => t[0] === getTheme())[1], icon: 'moon', onSelect: () => themeSheet() },
   ]);
+}
+
+const THEMES = [['auto', '自動（iPhone の設定に合わせる）'], ['dark', 'ダーク'], ['light', 'ライト']];
+
+function themeSheet() {
+  const box = h('div', { class: 'chips col' });
+  const draw = () => box.replaceChildren(...THEMES.map(([k, l]) => h('button', {
+    type: 'button', class: 'chip', 'aria-pressed': String(getTheme() === k),
+    onclick: () => { setTheme(k); draw(); },
+  }, l)));
+  draw();
+  openSheet({
+    title: '画面の色',
+    body: [box, h('p', { class: 'note' }, 'この iPhone での見え方だけが変わります。送った栞を見る人の画面は、その人の設定のままです。')],
+    actions: [btn('できた', () => closeSheet(), 'pri')],
+  });
 }
 
 /* ---------- 新しい栞 ---------- */

@@ -73,18 +73,60 @@ function enableSwipeDown(sheet) {
   }
 }
 
-// iPhone のキーボードが出たときに小窓が隠れないように
+// iPhone のキーボードが出たときに小窓が隠れないように。
+// 小窓の置き場を「今見えている範囲」（キーボードを除いた所）にぴったり合わせ、
+// 入力中の欄が小窓の中で見える所までスクロールする。
 export function watchKeyboard() {
   const vv = window.visualViewport;
-  if (!vv) return;
+  const L = layer();
   const upd = () => {
-    const kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
-    document.documentElement.style.setProperty('--kb', kb + 'px');
-    document.documentElement.style.setProperty('--vvh', vv.height + 'px');
+    if (!vv) return;
+    L.style.top = vv.offsetTop + 'px';
+    L.style.height = vv.height + 'px';
+    document.documentElement.classList.toggle('kb-open', window.innerHeight - vv.height > 120);
+    const f = document.activeElement;
+    if (f && L.contains(f)) keepVisible(f);
   };
-  vv.addEventListener('resize', upd);
-  vv.addEventListener('scroll', upd);
-  upd();
+  if (vv) {
+    vv.addEventListener('resize', upd);
+    vv.addEventListener('scroll', upd);
+    upd();
+  }
+  L.addEventListener('focusin', e => {
+    const t = e.target;
+    if (!t.matches || !t.matches('input, textarea')) return;
+    // キーボードが出きってからもう一度
+    setTimeout(() => keepVisible(t), 60);
+    setTimeout(() => { upd(); keepVisible(t); }, 360);
+  });
+}
+
+function keepVisible(el) {
+  const body = el.closest('.sheet-body');
+  if (!body) return;
+  const r = el.getBoundingClientRect(), br = body.getBoundingClientRect();
+  if (r.bottom > br.bottom - 12) body.scrollTop += r.bottom - br.bottom + 12;
+  else if (r.top < br.top + 8) body.scrollTop -= br.top + 8 - r.top;
+}
+
+/* ---------- 画面の色（自動・ダーク・ライト） ---------- */
+
+const THEME_KEY = 'shiori-theme';
+export function getTheme() {
+  try { const t = localStorage.getItem(THEME_KEY); return t === 'dark' || t === 'light' ? t : 'auto'; } catch { return 'auto'; }
+}
+export function setTheme(t) {
+  try { if (t === 'auto') localStorage.removeItem(THEME_KEY); else localStorage.setItem(THEME_KEY, t); } catch { /* 覚えられなくても今は効く */ }
+  applyTheme(t);
+}
+export function applyTheme(t = getTheme()) {
+  const root = document.documentElement;
+  if (t === 'auto') delete root.dataset.theme; else root.dataset.theme = t;
+  // 上の帯（ステータスバーのあたり）の色も合わせる
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => {
+    const dark = t === 'dark' || (t === 'auto' && m.media.includes('dark'));
+    m.content = dark ? '#15171C' : '#F3F4F6';
+  });
 }
 
 /* ---------- メニュー ---------- */

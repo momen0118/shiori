@@ -3,7 +3,7 @@
 
 import { h, icon, linkify, extLink, fmtMD, isUrl, normTime, toMin, isDate, diffDays, fmtDuration } from './util.js';
 import { openSheet, closeSheet, confirmSheet, copyText, toast } from './ui.js';
-import { field, textInput, textArea, clearable, chips, btn, errorBox } from './forms.js';
+import { field, textInput, textArea, clearable, chips, btn, errorBox, labelEl } from './forms.js';
 import { LABELS, MODES, STAY, PATTERNS, COLORS, dayCount, dayDate } from './format.js';
 import { ensureDay, dayItems, stopsOf, insertStopByTime, removeStopAt, shiftFrom, todayIndex } from './itin.js';
 
@@ -25,10 +25,11 @@ export function editStop(ctx, di, idx = null, preset = {}) {
   let label = src.label || '';
 
   const name = textInput({ value: src.name || '', placeholder: '施設名・場所名', enterkeyhint: 'done' });
-  const labelChips = chips({ options: LABELS, value: label, free: true, onChange: v => { label = v; drawRsv(); } });
+  const labelChips = chips({ options: LABELS, value: label, free: true, colored: true, onChange: v => { label = v; drawRsv(); } });
   const start = clearable('time', src.start || '');
   const end = clearable('time', src.end || '');
   const memo = textArea({ value: src.memo || '', placeholder: 'メモ（URL や電話番号も書けます）', rows: 2 });
+  const site = textInput({ value: src.siteUrl || '', placeholder: 'お店などのサイト', type: 'url', inputmode: 'url' });
   const map = textInput({ value: src.mapUrl || '', placeholder: 'Googleマップの共有リンク', type: 'url', inputmode: 'url' });
   const err = h('div');
 
@@ -90,6 +91,11 @@ export function editStop(ctx, di, idx = null, preset = {}) {
     if (st) s.start = st;
     if (en) s.end = en;
     const m = memo.value.trim(); if (m) s.memo = m;
+    const su = site.value.trim();
+    if (su) {
+      if (!isUrl(su)) { err.replaceChildren(errorBox(['サイトのリンクは https:// で始まる形で入れてください'])); return; }
+      s.siteUrl = su;
+    }
     const mu = map.value.trim();
     if (mu) {
       if (!isUrl(mu)) { err.replaceChildren(errorBox(['地図のリンクは https:// で始まる形で入れてください'])); return; }
@@ -123,6 +129,7 @@ export function editStop(ctx, di, idx = null, preset = {}) {
     field('ラベル', labelChips),
     h('div', { class: 'row2' }, field('開始', start), field('終了', end)),
     field('メモ', memo),
+    field('サイト', site, 'あれば箱に「サイト」ボタンが出ます'),
     field('地図', map, 'あれば箱に「地図」ボタンが出ます'),
     rsvBox,
     err,
@@ -250,7 +257,7 @@ export function reservationSheet(ctx, di, idx) {
 
   openSheet({
     head: h('div', { class: 'sheet-head' },
-      h('div', { class: 'sheet-title' }, stop.label ? h('span', { class: 'lbl' }, stop.label) : null, stop.name),
+      h('div', { class: 'sheet-title' }, stop.label ? labelEl(stop.label) : null, stop.name),
       h('div', { class: 'sheet-sub' }, [d ? fmtMD(d) : `${di + 1}日目`, stop.start].filter(Boolean).join(' '))),
     title: stop.name,
     body: kv,
@@ -440,7 +447,7 @@ export function wishToItinerary(ctx, i) {
         ctx.change(bk => {
           const s = { type: 'stop', name: w.name };
           if (st) s.start = st;
-          if (w.siteUrl) s.memo = w.siteUrl; // サイトURLは箱に持たせないのでメモへ
+          if (w.siteUrl) s.siteUrl = w.siteUrl;
           if (w.mapUrl) s.mapUrl = w.mapUrl;
           insertStopByTime(ensureDay(bk, day).items, s);
           bk.wishlist.splice(i, 1);
