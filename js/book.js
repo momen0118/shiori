@@ -326,7 +326,7 @@ export function openBook(root, opts) {
       { label: 'Claude から読み込む', sub: '置き換え・いけたらいくだけ足す', icon: 'import', onSelect: () => importInto() },
       rec.prev ? { label: '置き換える前に戻す', icon: 'undo', onSelect: () => undoReplace() } : null,
       url ? {
-        label: '夫に送る', sub: `LINE などで送るリンク（${url.length.toLocaleString()}文字）`, icon: 'share',
+        label: '送る', sub: `LINE などで送るリンク（${url.length.toLocaleString()}文字）`, icon: 'share',
         onSelect: () => shareLink({ title: b.title, text: `${b.title}の栞`, url }),
       } : null,
       b.done
