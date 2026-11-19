@@ -1,10 +1,11 @@
 /* 旅のしおり：見た目
-   ダークが基本。iPhone の設定がライトならライトになる。
+   ダークが基本。自動なら iPhone の設定に合わせ、本棚のメニューでダーク・ライトに固定もできる。
    栞の中では、表紙の色（--hue）がアクセント色になる。 */
 
 :root{
   --c-kaki:#C9784F;--c-yamabuki:#D3A541;--c-wakakusa:#8DAE5E;--c-seiji:#6FAA9C;
   --c-ai:#5677A8;--c-fuji:#9787C2;--c-sakura:#D3909F;--c-nezumi:#8E8C88;
+  --c-yu:#5FA3C9; /* ラベル「温泉」用（表紙の色にはない） */
 
   --bg:#15171C;--sf:#1F2229;--sf2:#282C34;--tx:#E7E8EB;--mu:#9A9FAA;--ln:#353A43;--base:#14161A;
   --dim:rgba(0,0,0,.55);--red:#EE877E;--red-soft:rgba(238,135,126,.14);--warn:#E8B867;--warn-soft:rgba(232,184,103,.13);
@@ -13,6 +14,7 @@
   --acc-soft:color-mix(in srgb,var(--hue) 24%,transparent);
   --on:#101215;
   --pat-bg:26%;--pat-ln:52%;--pat-ln2:30%;
+  --lbl-mix:#fff;--lbl-tx:70%;--lbl-bg:24%;
 
   --display:"Hiragino Maru Gothic ProN","Hiragino Maru Gothic Pro","ヒラギノ丸ゴ ProN",system-ui,sans-serif;
   --body:"Hiragino Sans","Hiragino Kaku Gothic ProN","ヒラギノ角ゴシック",system-ui,-apple-system,sans-serif;
@@ -24,16 +26,29 @@
   --tabw:38px;
   color-scheme:dark;
 }
+/* 画面の色：本棚のメニューで「自動・ダーク・ライト」を選べる（html の data-theme）。
+   自動のときは iPhone の設定に合わせる。下の2か所は同じ中身。 */
 @media (prefers-color-scheme:light){
-  :root{
+  :root:not([data-theme="dark"]){
     --bg:#F3F4F6;--sf:#FFFFFF;--sf2:#ECEEF1;--tx:#1E2128;--mu:#666E7D;--ln:#DADDE3;--base:#FFFFFF;
     --dim:rgba(20,24,30,.38);--red:#B3261E;--red-soft:rgba(179,38,30,.09);--warn:#7E520A;--warn-soft:#F8EBD2;
     --acc:color-mix(in srgb,var(--hue) 68%,#000);
     --acc-soft:color-mix(in srgb,var(--hue) 18%,transparent);
     --on:#FFFFFF;
     --pat-bg:16%;--pat-ln:46%;--pat-ln2:24%;
+    --lbl-mix:#000;--lbl-tx:58%;--lbl-bg:17%;
     color-scheme:light;
   }
+}
+:root[data-theme="light"]{
+  --bg:#F3F4F6;--sf:#FFFFFF;--sf2:#ECEEF1;--tx:#1E2128;--mu:#666E7D;--ln:#DADDE3;--base:#FFFFFF;
+  --dim:rgba(20,24,30,.38);--red:#B3261E;--red-soft:rgba(179,38,30,.09);--warn:#7E520A;--warn-soft:#F8EBD2;
+  --acc:color-mix(in srgb,var(--hue) 68%,#000);
+  --acc-soft:color-mix(in srgb,var(--hue) 18%,transparent);
+  --on:#FFFFFF;
+  --pat-bg:16%;--pat-ln:46%;--pat-ln2:24%;
+  --lbl-mix:#000;--lbl-tx:58%;--lbl-bg:17%;
+  color-scheme:light;
 }
 
 *{box-sizing:border-box}
@@ -131,6 +146,11 @@ a{color:var(--acc)}
 .m-sec{font-size:12px;color:var(--mu);margin:20px 0 8px;letter-spacing:.06em}
 .empty{color:var(--mu);font-size:14px;margin:14px 0}
 .lbl{display:inline-block;font-size:11px;line-height:1.65;padding:0 7px;border-radius:6px;background:var(--sf2);color:var(--mu);margin-right:6px;vertical-align:1px;white-space:nowrap}
+/* ラベルごとの色（--lh に色を入れる） */
+.lbl[style*="--lh"],.chip.lchip[aria-pressed="true"]{
+  background:color-mix(in srgb,var(--lh) var(--lbl-bg),transparent);
+  color:color-mix(in srgb,var(--lh) var(--lbl-tx),var(--lbl-mix));font-weight:600;
+}
 .sec-l{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--mu);margin:16px 0 6px;letter-spacing:.04em}
 
 /* ---------- ボタン ---------- */
@@ -309,17 +329,20 @@ button.cover-plate:active{opacity:.85}
 
 /* ---------- 小窓 ---------- */
 
-#sheet-layer{position:fixed;inset:0;z-index:50}
-.dim{position:fixed;inset:0;background:var(--dim);opacity:0;transition:opacity .2s}
+/* 小窓の置き場。top と height は JS で「今見えている範囲」（キーボードを除いた所）に合わせる */
+#sheet-layer{position:fixed;left:0;right:0;top:0;height:100%;z-index:50;overflow:hidden}
+.dim{position:absolute;inset:0;background:var(--dim);opacity:0;transition:opacity .2s}
 .dim.in{opacity:1}
 .sheet{
-  position:fixed;left:0;right:0;bottom:var(--kb,0px);margin:0 auto;max-width:640px;
-  max-height:calc(var(--vvh,100dvh) - var(--st) - 20px);display:flex;flex-direction:column;
+  position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:640px;
+  max-height:calc(100% - var(--st) - 16px);display:flex;flex-direction:column;
   background:var(--sf);border-radius:22px 22px 0 0;border-top:1px solid var(--ln);
   padding:8px calc(18px + var(--sr)) calc(14px + var(--sb)) calc(18px + var(--sl));
   transform:translateY(105%);transition:transform .24s cubic-bezier(.2,.8,.2,1);
 }
 .sheet.in{transform:translateY(0)}
+.kb-open .sheet{max-height:calc(100% - 8px);padding-bottom:10px;border-radius:16px 16px 0 0}
+.kb-open .sheet .grab{display:none}
 .grab{width:40px;height:5px;border-radius:3px;background:var(--ln);margin:0 auto 10px;flex:none}
 .sheet-head{flex:none;padding-bottom:6px}
 .sheet-title{font-family:var(--display);font-weight:700;font-size:18px;line-height:1.4;overflow-wrap:anywhere}
@@ -422,6 +445,9 @@ input.field::-webkit-date-and-time-value{text-align:left}
   pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 8px 28px rgba(0,0,0,.3);
 }
 #toast.in{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+/* 小窓が開いているときは、ボタンに重ならないよう上に出す */
+.sheet-open #toast{bottom:auto;top:calc(var(--st) + 12px);transform:translate(-50%,-16px)}
+.sheet-open #toast.in{transform:translate(-50%,0)}
 .toast-btn{border:0;background:transparent;color:inherit;font-weight:700;text-decoration:underline;min-height:36px;padding:0 4px;flex:none}
 
 @media (prefers-reduced-motion:reduce){

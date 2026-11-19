@@ -3,7 +3,7 @@
 
 import { h, icon, linkify, extLink, fmtMD, fmtRangeLong, fmtDuration, addDays, debounce } from './util.js';
 import { copyText, makeSortable, grip } from './ui.js';
-import { textInput, autosize, btn } from './forms.js';
+import { textInput, autosize, btn, labelEl } from './forms.js';
 import { dayCount, dayDate } from './format.js';
 import { ensureDay, dayItems, stopsOf, moveStop, moveDuration, nowStopIdx, todayIndex } from './itin.js';
 import {
@@ -166,6 +166,7 @@ function timeCell(s) {
 function stopCard(ctx, di, idx, s, now) {
   const btns = [];
   if (s.reservation) btns.push(h('button', { type: 'button', class: 'mbtn', onclick: e => { stop(e); reservationSheet(ctx, di, idx); } }, icon('ticket'), '予約'));
+  if (s.siteUrl) { const a = extLink(s.siteUrl, icon('globe'), 'サイト'); a.className = 'mbtn'; a.addEventListener('click', stop); btns.push(a); }
   if (s.mapUrl) { const a = extLink(s.mapUrl, icon('pin'), '地図'); a.className = 'mbtn'; a.addEventListener('click', stop); btns.push(a); }
   const one = btns.length === 1;
   return h('div', {
@@ -176,7 +177,7 @@ function stopCard(ctx, di, idx, s, now) {
   now ? h('div', { class: 'now-tag' }, 'いまここ') : null,
   h('div', { class: 'c-top' },
     ctx.readOnly ? null : grip(),
-    h('div', { class: 'c-nm' }, s.label ? h('span', { class: 'lbl' }, s.label) : null, s.name),
+    h('div', { class: 'c-nm' }, s.label ? labelEl(s.label) : null, s.name),
     one ? btns[0] : null),
   s.memo ? h('div', { class: 'c-memo pre' }, linkify(s.memo)) : null,
   btns.length > 1 ? h('div', { class: 'c-btns' }, btns) : null);
@@ -218,8 +219,9 @@ export function renderSpots(ctx) {
       if (filter === 'rsv' && !it.reservation) return;
       rows.push(h('button', { type: 'button', class: 'srow', onclick: () => ctx.goTo(`day-${di}`, { focus: idx }) },
         h('span', { class: 'when' }, `${di + 1}日目`, it.start ? h('br') : null, it.start || null),
-        h('span', { class: 's-nm' }, it.label ? h('span', { class: 'lbl' }, it.label) : null, it.name),
+        h('span', { class: 's-nm' }, it.label ? labelEl(it.label) : null, it.name),
         it.reservation ? h('span', { class: 'rv' }, '予約') : null,
+        it.siteUrl ? icon('globe') : null,
         it.mapUrl ? icon('pin') : null));
     });
   }

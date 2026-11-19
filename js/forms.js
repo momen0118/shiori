@@ -1,6 +1,12 @@
 // 入力欄の部品
 
 import { h, icon } from './util.js';
+import { labelHue } from './format.js';
+
+// 色付きのラベル
+export function labelEl(label) {
+  return h('span', { class: 'lbl', style: { '--lh': labelHue(label) } }, label);
+}
 
 export function field(label, control, hint) {
   return h('label', { class: 'fld' },
@@ -42,12 +48,14 @@ export function clearable(type, value = '') {
 
 // 選べるチップ。自由入力つきも。
 // chips({ options, value, free:true, maxlength, onChange })
-export function chips({ options, value = '', free = false, maxlength = 6, placeholder = '自由に', onChange, allowNone = true }) {
+// colored:true ならラベルの色で選ばれた状態を出す
+export function chips({ options, value = '', free = false, maxlength = 6, placeholder = '自由に', onChange, allowNone = true, colored = false }) {
   let cur = value || '';
   const wrap = h('div', { class: 'chips' });
   const freeInp = free ? h('input', { class: 'field chip-free', type: 'text', maxlength, placeholder, value: options.includes(cur) ? '' : cur, autocomplete: 'off' }) : null;
   const btns = options.map(o => h('button', {
-    type: 'button', class: 'chip', 'aria-pressed': String(o === cur),
+    type: 'button', class: 'chip' + (colored ? ' lchip' : ''), 'aria-pressed': String(o === cur),
+    style: colored ? { '--lh': labelHue(o) } : null,
     onclick: () => {
       cur = (cur === o && allowNone) ? '' : o;
       if (freeInp) freeInp.value = '';

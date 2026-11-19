@@ -21,6 +21,20 @@ export const MODES = ['車', '徒歩', '電車', 'バス', '飛行機', '船'];
 export const LABEL_MAX = 6;
 export const STAY = '泊まる';
 
+// ラベルの色。決まった候補は色を決めておき、自由に書いたラベルは文字から色を選ぶ（同じ文字ならいつも同じ色）
+const LABEL_HUE = {
+  観光: '--c-ai', あそぶ: '--c-wakakusa', 食事: '--c-kaki', カフェ: '--c-yamabuki',
+  買い物: '--c-sakura', 休憩: '--c-seiji', 泊まる: '--c-fuji', 温泉: '--c-yu',
+};
+const FREE_HUES = ['--c-kaki', '--c-yamabuki', '--c-wakakusa', '--c-seiji', '--c-ai', '--c-fuji', '--c-sakura', '--c-yu'];
+export function labelHue(label) {
+  if (!label) return null;
+  if (LABEL_HUE[label]) return `var(${LABEL_HUE[label]})`;
+  let n = 0;
+  for (const ch of label) n = (n * 31 + ch.codePointAt(0)) >>> 0;
+  return `var(${FREE_HUES[n % FREE_HUES.length]})`;
+}
+
 const PATTERN_KEYS = PATTERNS.map(p => p[0]);
 const COLOR_KEYS = COLORS.map(c => c[0]);
 
@@ -178,6 +192,10 @@ function normStop(it, where, errors, warnings) {
     else warnings.push(`「${name}」の${k === 'start' ? '開始' : '終了'}時刻「${it[k]}」が読めないので外しました`);
   }
   const memo = text(it.memo); if (memo) s.memo = memo;
+  if (it.siteUrl) {
+    if (isUrl(it.siteUrl)) s.siteUrl = it.siteUrl.trim();
+    else warnings.push(`「${name}」のサイトのリンクが URL の形ではないので外しました`);
+  }
   if (it.mapUrl) {
     if (isUrl(it.mapUrl)) s.mapUrl = it.mapUrl.trim();
     else warnings.push(`「${name}」の地図のリンクが URL の形ではないので外しました`);
