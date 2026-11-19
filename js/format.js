@@ -1,4 +1,4 @@
-// 栞の JSON 形式（doc/FORMAT.md）まわり：
+// 栞の JSON 形式（docs/FORMAT.md）まわり：
 // 読み込み・形の点検・整え・古い形の読み替え・中身の数え上げ・書き出し
 
 import { parseJson, JsonError } from './jsonparse.js';
