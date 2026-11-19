@@ -94,10 +94,11 @@ export function shiftFrom(items, ord, min) {
 }
 
 // 移動の所要時間（前の立ち寄りの終了 → 次の立ち寄りの開始）。出せなければ null
+// 前の立ち寄りに終了がなければ、開始を終了とみなす（例：出発 07:30 → 次が 10:30 なら 3時間）
 export function moveDuration(items, idx) {
   const prev = items[idx - 1], next = items[idx + 1];
   if (!prev || !next || prev.type !== 'stop' || next.type !== 'stop') return null;
-  const a = toMin(prev.end), b = toMin(next.start);
+  const a = toMin(prev.end || prev.start), b = toMin(next.start);
   if (a == null || b == null || b <= a) return null;
   return b - a;
 }

@@ -48,7 +48,7 @@ export async function renderShelf(root, nav) {
       h('p', null, 'まだしおりがありません。'),
       h('p', { class: 'note' }, '「新しいしおり」からタイトルだけで作れます。Claude と相談した JSON があれば、右上のメニューの「Claude から読み込む」から入れられます。')));
   } else if (!live.length) {
-    body.push(h('p', { class: 'empty' }, '本棚は空です。済みにしたしおりは思い出の棚にあります。'));
+    body.push(h('p', { class: 'empty' }, '本棚は空です。しまったしおりは思い出の棚にあります。'));
   }
 
   body.push(h('button', { type: 'button', class: 'shelf-link', onclick: () => nav.memories() },
@@ -67,7 +67,7 @@ export async function renderMemories(root, nav) {
     h('div', { class: 'pg' },
       h('div', { class: 'shelf-head' }, h('h1', { class: 'p-h big' }, '思い出の棚'), h('span', { class: 'p-sub' }, `${recs.length}冊`)),
       recs.length ? h('div', { class: 'grid2' }, recs.map(r => tile(r, nav)))
-        : h('p', { class: 'empty' }, '済みにしたしおりがここに並びます。しおりのメニューの「済みにする」で入ります。'))));
+        : h('p', { class: 'empty' }, 'しおりのメニューの「思い出の棚にしまう」で、ここに並びます。'))));
 }
 
 function tile(r, nav) {

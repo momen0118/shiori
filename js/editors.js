@@ -1,7 +1,7 @@
 // しおりの中身を直す小窓たち
 // ctx … book.js が渡す { book, readOnly, change(fn, msg), goTo(key, opts) }
 
-import { h, icon, linkify, extLink, fmtMD, isUrl, normTime, toMin, isDate, diffDays, fmtDuration } from './util.js';
+import { h, icon, linkify, fmtMD, isUrl, normTime, toMin, isDate, diffDays, fmtDuration } from './util.js';
 import { openSheet, closeSheet, confirmSheet, copyText, toast } from './ui.js';
 import { field, textInput, textArea, clearable, chips, btn, errorBox, labelEl } from './forms.js';
 import { LABELS, MODES, STAY, PATTERNS, COLORS, dayCount, dayDate } from './format.js';
@@ -47,7 +47,7 @@ export function editStop(ctx, di, idx = null, preset = {}) {
       rsvBox.append(btn('予約情報の入力', () => { hasRsv = true; drawRsv(); }, 'quiet', 'ticket'));
       return;
     }
-    rIn.number = textInput({ value: r.number || '', placeholder: 'AB12345', autocomplete: 'off' });
+    rIn.number = textInput({ value: r.number || '', placeholder: '予約番号', autocomplete: 'off' });
     rIn.holder = textInput({ value: r.holder || '', placeholder: '誰の名前で予約したか' });
     const rows = [
       h('div', { class: 'sec-l' }, icon('ticket'), '予約'),
@@ -247,6 +247,9 @@ const fmtShift = m => fmtDuration(Math.abs(m));
 
 /* ---------- 予約の小窓 ---------- */
 
+// Gmail アプリの検索。検索画面まで開けなければ 'googlegmail://' にする（アプリが開くだけ）
+const GMAIL_SEARCH = 'googlegmail:///search?q=';
+
 export function reservationSheet(ctx, di, idx) {
   const stop = dayItems(ctx.book, di)[idx];
   const r = stop.reservation || {};
@@ -265,9 +268,12 @@ export function reservationSheet(ctx, di, idx) {
 
   const actions = [];
   if (!ctx.readOnly && r.number) {
-    actions.push(extLink(`https://mail.google.com/mail/u/0/#search/${encodeURIComponent(r.number)}`,
-      icon('mail'), 'Gmail で予約メールを探す'));
-    actions[0].className = 'btn pri wide';
+    // 予約番号をコピーしてから Gmail アプリを開く（検索画面まで開けるかは実機で確かめる）
+    const a = h('a', {
+      href: GMAIL_SEARCH + encodeURIComponent(r.number), class: 'btn pri wide',
+      onclick: () => { copyText(r.number, { done: '予約番号をコピーしました。Gmail の検索に貼ってください', title: '予約番号' }); },
+    }, icon('mail'), 'Gmail で予約メールを探す');
+    actions.push(a);
   }
   if (!ctx.readOnly) actions.push(btn('直す', () => { closeSheet(true); editStop(ctx, di, idx); }, 'quiet'));
 

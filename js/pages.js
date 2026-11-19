@@ -1,7 +1,7 @@
 // しおりの中のページ：表紙・持ち物・n日目・立ち寄り先・メモ
 // それぞれ ctx を受け取って、ページの中身（DOM）を返す。
 
-import { h, icon, linkify, extLink, fmtMD, fmtRangeLong, fmtDuration, addDays, debounce } from './util.js';
+import { h, icon, linkify, extLink, chromeLink, fmtMD, fmtRangeLong, fmtDuration, addDays, debounce } from './util.js';
 import { copyText, makeSortable, grip } from './ui.js';
 import { textInput, autosize, btn, labelEl } from './forms.js';
 import { dayCount, dayDate } from './format.js';
@@ -135,10 +135,11 @@ export function renderDay(ctx, di) {
   if (!ro) {
     foot.push(h('button', { type: 'button', class: 'addbox', onclick: () => editStop(ctx, di, null) }, icon('plus'), '予定を追加'));
     if (di === n - 1) {
-      const acts = [btn('日を足す', () => ctx.change(bk => {
+      const acts = [btn(`${n + 1}日目を追加`, () => ctx.change(bk => {
+        // 日付があれば最終日を1日延ばす（日数は日付から決まる）
         if (bk.startDate) bk.endDate = addDays(bk.startDate, n);
         else ensureDay(bk, n);
-      }, `${n + 1}日目を足しました`), 'quiet small', 'plus')];
+      }, `${n + 1}日目を追加しました`), 'quiet small', 'plus')];
       if (n > 1 && !items.length) {
         acts.push(btn('この日を消す', () => ctx.change(bk => {
           if (bk.startDate) bk.endDate = addDays(bk.startDate, n - 2);
@@ -166,7 +167,11 @@ function timeCell(s) {
 function stopCard(ctx, di, idx, s, now) {
   const btns = [];
   if (s.reservation) btns.push(h('button', { type: 'button', class: 'mbtn', onclick: e => { stop(e); reservationSheet(ctx, di, idx); } }, icon('ticket'), '予約'));
-  if (s.siteUrl) { const a = extLink(s.siteUrl, icon('globe'), 'サイト'); a.className = 'mbtn'; a.addEventListener('click', stop); btns.push(a); }
+  if (s.siteUrl) {
+    // 自分のしおりでは Chrome で開く。送ったしおりは相手に Chrome があるとは限らないので、ふつうのリンク
+    const a = ctx.readOnly ? extLink(s.siteUrl, icon('globe'), 'サイト') : chromeLink(s.siteUrl, icon('globe'), 'サイト');
+    a.className = 'mbtn'; a.addEventListener('click', stop); btns.push(a);
+  }
   if (s.mapUrl) { const a = extLink(s.mapUrl, icon('pin'), '地図'); a.className = 'mbtn'; a.addEventListener('click', stop); btns.push(a); }
   const one = btns.length === 1;
   return h('div', {

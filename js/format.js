@@ -16,23 +16,19 @@ export const COLORS = [
   ['kaki', '柿'], ['yamabuki', '山吹'], ['wakakusa', '若草'], ['seiji', '青磁'],
   ['ai', '藍'], ['fuji', '藤'], ['sakura', '桜'], ['nezumi', '鼠'],
 ];
-export const LABELS = ['観光', 'あそぶ', '食事', 'カフェ', '買い物', '休憩', '泊まる', '温泉'];
+export const LABELS = ['出発', '観光', 'あそぶ', '食事', 'カフェ', '買い物', '休憩', '泊まる', '温泉', '帰宅'];
 export const MODES = ['車', '徒歩', '電車', 'バス', '飛行機', '船'];
 export const LABEL_MAX = 6;
 export const STAY = '泊まる';
 
-// ラベルの色。決まった候補は色を決めておき、自由に書いたラベルは文字から色を選ぶ（同じ文字ならいつも同じ色）
+// ラベルの色。決まった候補はそれぞれ色を決めてある。自由に書いたラベルはすべて鼠色
 const LABEL_HUE = {
-  観光: '--c-ai', あそぶ: '--c-wakakusa', 食事: '--c-kaki', カフェ: '--c-yamabuki',
-  買い物: '--c-sakura', 休憩: '--c-seiji', 泊まる: '--c-fuji', 温泉: '--c-yu',
+  出発: '--c-akane', 観光: '--c-ai', あそぶ: '--c-wakakusa', 食事: '--c-kaki', カフェ: '--c-yamabuki',
+  買い物: '--c-sakura', 休憩: '--c-seiji', 泊まる: '--c-fuji', 温泉: '--c-yu', 帰宅: '--c-ume',
 };
-const FREE_HUES = ['--c-kaki', '--c-yamabuki', '--c-wakakusa', '--c-seiji', '--c-ai', '--c-fuji', '--c-sakura', '--c-yu'];
 export function labelHue(label) {
   if (!label) return null;
-  if (LABEL_HUE[label]) return `var(${LABEL_HUE[label]})`;
-  let n = 0;
-  for (const ch of label) n = (n * 31 + ch.codePointAt(0)) >>> 0;
-  return `var(${FREE_HUES[n % FREE_HUES.length]})`;
+  return `var(${LABEL_HUE[label] || '--c-nezumi'})`;
 }
 
 const PATTERN_KEYS = PATTERNS.map(p => p[0]);

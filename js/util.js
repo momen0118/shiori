@@ -159,6 +159,12 @@ export function extLink(href, ...children) {
   return h('a', { href, target: '_blank', rel: 'noopener noreferrer' }, ...children);
 }
 
+// Chrome アプリで開くリンク（https:// → googlechromes://、http:// → googlechrome://）
+export function chromeLink(href, ...children) {
+  const u = href.replace(/^https:\/\//i, 'googlechromes://').replace(/^http:\/\//i, 'googlechrome://');
+  return h('a', { href: u }, ...children);
+}
+
 export function isUrl(s) { return typeof s === 'string' && /^https?:\/\/\S+$/.test(s.trim()); }
 
 /* ---------- いろいろ ---------- */
