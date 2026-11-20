@@ -113,37 +113,6 @@ function keepVisible(el) {
   else if (r.top < br.top + 8) body.scrollTop -= br.top + 8 - r.top;
 }
 
-/* ---------- 「連絡先を自動入力」を出さない ---------- */
-
-// iPhone の Safari は、欄の見出し（<label>）や周りの文字から「名前」「電話」などの欄だと推測して
-// 「連絡先を自動入力」を出す（autocomplete="off" は効かない）。
-// そこで、すべての入力欄に、連絡先と関係のない見出し（画面には見えない）を付けて、推測させない。
-let fieldNo = 0;
-function neutralize(el) {
-  if (el.dataset.nl || el.type === 'file' || el.type === 'hidden') return;
-  el.dataset.nl = '1';
-  fieldNo++;
-  if (!el.id) el.id = 'shioriField' + fieldNo;
-  if (!el.name) el.name = 'shioriField' + fieldNo; // 「-」入りの name は電話番号と思われやすいので使わない
-  el.setAttribute('autocomplete', 'off');
-  const lb = document.createElement('label');
-  lb.htmlFor = el.id;
-  lb.className = 'vh';
-  lb.setAttribute('aria-hidden', 'true');
-  lb.textContent = 'しおり';
-  el.before(lb);
-}
-export function neutralizeFields() {
-  const scan = root => {
-    if (!(root instanceof Element)) return;
-    if (root.matches('input, textarea')) neutralize(root);
-    root.querySelectorAll('input, textarea').forEach(neutralize);
-  };
-  scan(document.body);
-  new MutationObserver(ms => { for (const m of ms) m.addedNodes.forEach(scan); })
-    .observe(document.body, { childList: true, subtree: true });
-}
-
 /* ---------- 画面の色（自動・ダーク・ライト） ---------- */
 
 const THEME_KEY = 'shiori-theme';

@@ -226,7 +226,7 @@ export function shiftSheet(ctx, di, ord) {
     body: [
       h('div', { class: 'seg', role: 'group' }, segBtns),
       h('div', { class: 'chips' }, btns),
-      h('div', { class: 'fld inline' }, h('span', { class: 'fld-l' }, 'または'), num, h('span', null, '分')),
+      h('label', { class: 'fld inline' }, h('span', { class: 'fld-l' }, 'または'), num, h('span', null, '分')),
       preview,
     ],
     actions: [
