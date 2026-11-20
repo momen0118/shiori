@@ -216,7 +216,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
     <li><a href="#packing"><span>6</span>持ち物</a></li>
     <li><a href="#itinerary"><span>7</span>行程</a></li>
     <li><a href="#reservation"><span>8</span>予約</a></li>
-    <li><a href="#spots"><span>9</span>立ち寄り先</a></li>
+    <li><a href="#spots"><span>9</span>行き先</a></li>
     <li><a href="#memo"><span>10</span>メモ</a></li>
     <li><a href="#data"><span>11</span>保存とバックアップ</a></li>
     <li><a href="#share"><span>12</span>夫に送る</a></li>
@@ -310,7 +310,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
   <h2><span class="num">4</span>しおりの中の共通ルール</h2>
   <div class="prose">
     <ul class="spec">
-      <li>ページの順番：<b>表紙 → 持ち物 → 1日目 … n日目 → 立ち寄り先 → メモ</b>。日数は開始日〜終了日から決まる。最後の日のページの一番下の「＋ n日目を追加」で日を足せる（日付があれば最終日も1日延びる）。</li>
+      <li>ページの順番：<b>表紙 → 持ち物 → 1日目 … n日目 → 行き先 → メモ</b>。日数は開始日〜終了日から決まる。最後の日のページの一番下の「＋ n日目を追加」で日を足せる（日付があれば最終日も1日延びる）。</li>
       <li>左右のスワイプで紙をめくるような演出でページが変わる。ページの中は縦にスクロールできる（紙なのに縦に伸びるのは気にしない）。動きを減らす設定の iPhone では、めくりの演出を控えめにする。</li>
       <li>画面の右端に縦書きのインデックスタブ。タップでそのページへ一発で飛ぶ。今いるページのタブはしおりの色。</li>
       <li>並べ替えは、行の左の「つまみ」を掴んだときだけ動く。ページめくりのスワイプとぶつからないようにするため。</li>
@@ -338,7 +338,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
     <figure style="margin:0">
       <div class="mock"><div class="phone"><div class="screen with-tabs">
         <div class="cover-scr pat p-gingham" style="--hue:var(--seiji)"></div>
-        <div class="tabs" aria-hidden="true"><span class="tab on">表紙</span><span class="tab">持ち物</span><span class="tab">1日目</span><span class="tab">2日目</span><span class="tab">立ち寄り</span><span class="tab">メモ</span></div>
+        <div class="tabs" aria-hidden="true"><span class="tab on">表紙</span><span class="tab">持ち物</span><span class="tab">1日目</span><span class="tab">2日目</span><span class="tab">行き先</span><span class="tab">メモ</span></div>
         <div class="cover-plate">
           <b>〇〇温泉 1泊2日</b>
           <div class="d">11月21日（土）〜 22日（日）</div>
@@ -389,7 +389,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
     </div>
     <figure style="margin:0">
       <div class="mock"><div class="phone"><div class="screen with-tabs">
-        <div class="tabs" aria-hidden="true"><span class="tab">表紙</span><span class="tab on">持ち物</span><span class="tab">1日目</span><span class="tab">2日目</span><span class="tab">立ち寄り</span><span class="tab">メモ</span></div>
+        <div class="tabs" aria-hidden="true"><span class="tab">表紙</span><span class="tab on">持ち物</span><span class="tab">1日目</span><span class="tab">2日目</span><span class="tab">行き先</span><span class="tab">メモ</span></div>
         <div class="pad">
           <div class="m-head"><span class="m-h">持ち物</span><span class="m-sub">9個</span></div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
@@ -445,12 +445,12 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
       <ul class="spec">
         <li><b>ここから後ろをずらす：</b>遅れたときに、選んだ予定から後ろ（その日の中）の時刻をまとめて何分かずらす。</li>
         <li>予定の追加・削除・並べ替え（つまみ）・時刻の修正はその場でできる。</li>
-        <li>立ち寄り先ページの「いけたらいく」から行程に入れられる（<a href="#spots">9 立ち寄り先</a>）。</li>
+        <li>行き先ページの「いけたらいく」から行程に入れられる（<a href="#spots">9 行き先</a>）。</li>
       </ul>
     </div>
     <figure style="margin:0">
       <div class="mock"><div class="phone"><div class="screen with-tabs">
-        <div class="tabs" aria-hidden="true"><span class="tab">表紙</span><span class="tab">持ち物</span><span class="tab on">1日目</span><span class="tab">2日目</span><span class="tab">立ち寄り</span><span class="tab">メモ</span></div>
+        <div class="tabs" aria-hidden="true"><span class="tab">表紙</span><span class="tab">持ち物</span><span class="tab on">1日目</span><span class="tab">2日目</span><span class="tab">行き先</span><span class="tab">メモ</span></div>
         <div class="pad">
           <div class="m-head"><span><span class="m-h">1日目</span><span class="m-sub" style="margin-left:8px">11/21（土）</span></span></div>
           <div class="tl">
@@ -490,14 +490,14 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
       <ul class="spec">
         <li>予約は立ち寄りにひもづく。施設名と日時は立ち寄りの箱から引くので、二重に入力しない。</li>
         <li>行程の「予約」ボタンを押すと、下から小窓が出る。ページは移動しない。項目が少ないので折りたたみはなし。</li>
-        <li>予約の一覧は、立ち寄り先ページの「予約あり」で絞り込んで見る。</li>
+        <li>予約の一覧は、行き先ページの「予約あり」で絞り込んで見る。</li>
       </ul>
       <table class="fields">
         <thead><tr><th>項目</th><th>内容</th></tr></thead>
         <tbody>
           <tr><td>予約番号</td><td>コピーボタン付き</td></tr>
           <tr><td>名義</td><td>誰の名前で予約したか</td></tr>
-          <tr><td>メール</td><td>「Gmail で予約メールを探す」を押すと、予約番号をコピーしてから Gmail アプリを開く（<code>googlegmail:///search?q=予約番号</code>）。「予約番号をコピーしました。Gmail の検索に貼ってください」と出す。予約番号が空ならボタンを出さない。夫からの予約メールも転送されて自分の Gmail にある</td></tr>
+          <tr><td>メール</td><td>「Gmail で予約メールを探す」を押すと、予約番号をコピーしてから Gmail アプリを開く（<code>googlegmail://</code>。アプリを開くだけ。検索の形は実機で「リンクが開けませんでした」になったので使わない）。「予約番号をコピーしました。Gmail の検索に貼ってください」と出す。予約番号が空ならボタンを出さない。夫からの予約メールも転送されて自分の Gmail にある</td></tr>
           <tr><td>チェックイン・チェックアウト</td><td>ラベルが「泊まる」の立ち寄りのときだけ出す</td></tr>
           <tr><td>受付・集合時刻</td><td>「泊まる」以外の立ち寄りのときだけ出す</td></tr>
           <tr><td>メモ</td><td>電話でしか予約できない店の番号など。URL と電話番号はタップできる</td></tr>
@@ -538,7 +538,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
 </section>
 
 <section id="spots">
-  <h2><span class="num">9</span>立ち寄り先</h2>
+  <h2><span class="num">9</span>行き先</h2>
   <div class="split">
     <div class="prose">
       <ul class="spec">
@@ -548,17 +548,17 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
       </ul>
       <h3>いけたらいく</h3>
       <ul class="spec">
-        <li>ページの下の方に置く。名前だけで気軽に登録できる。サイトURLと地図URLは空でよい。</li>
-        <li>項目をタップすると「行程に入れる」が出る。何日目かを選ぶ（旅行中は今日が初期値）→ 時刻を入れる（空でよい）→ 時刻があればその位置に、なければその日の最後に入る。</li>
+        <li>ページの下の方に置く。「＋ お店や場所を追加」を押すと、名前・サイト・地図の3つの欄の小窓が出る（名前の欄にすぐ入力できる）。名前だけでも追加できる。</li>
+        <li>項目をタップすると「行程に入れる」と、サイトも地図も空なら「URLを追加」、どちらかが入っていれば「修正」が出る。「行程に入れる」は、何日目かを選ぶ（旅行中は今日が初期値）→ 時刻を入れる（空でよい）→ 時刻があればその位置に、なければその日の最後に入る。</li>
         <li>行程に入れたら、いけたらいくの欄から消えて上の一覧に移る。サイトURLと地図URLは、そのまま箱のサイト・地図に移す。</li>
         <li>思い出の棚にしまっても、行かなかったいけたらいくはそのまま残す。</li>
       </ul>
     </div>
     <figure style="margin:0">
       <div class="mock"><div class="phone"><div class="screen with-tabs">
-        <div class="tabs" aria-hidden="true"><span class="tab">表紙</span><span class="tab">持ち物</span><span class="tab">1日目</span><span class="tab">2日目</span><span class="tab on">立ち寄り</span><span class="tab">メモ</span></div>
+        <div class="tabs" aria-hidden="true"><span class="tab">表紙</span><span class="tab">持ち物</span><span class="tab">1日目</span><span class="tab">2日目</span><span class="tab on">行き先</span><span class="tab">メモ</span></div>
         <div class="pad">
-          <div class="m-head"><span class="m-h">立ち寄り先</span></div>
+          <div class="m-head"><span class="m-h">行き先</span></div>
           <div class="fchips"><span class="fc on">すべて</span><span class="fc"><svg class="ico"><use href="#i-ticket"/></svg>予約あり</span></div>
           <div class="srow"><span class="when">1日目<br>10:00</span><span class="s-nm"><span class="lbl">あそぶ</span>〇〇公園</span><svg class="ico"><use href="#i-pin"/></svg></div>
           <div class="srow"><span class="when">1日目<br>12:00</span><span class="s-nm"><span class="lbl">買い物</span>イオン〇〇店</span><svg class="ico"><use href="#i-pin"/></svg></div>
@@ -571,10 +571,10 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
             <div style="margin-top:7px"><span class="m-btn pri"><svg class="ico"><use href="#i-plus"/></svg>行程に入れる</span></div>
           </div>
           <div class="srow" style="border-top:0"><span class="s-nm">〇〇の滝</span><svg class="ico"><use href="#i-pin"/></svg></div>
-          <div class="addbox"><svg class="ico"><use href="#i-plus"/></svg>お店や場所の名前（URLはあとからでも）</div>
+          <div class="addbox"><svg class="ico"><use href="#i-plus"/></svg>お店や場所を追加</div>
         </div>
       </div></div></div>
-      <figcaption class="cap">立ち寄り先（予約一覧と、いけたらいく）</figcaption>
+      <figcaption class="cap">行き先（予約一覧と、いけたらいく）</figcaption>
     </figure>
   </div>
 </section>
@@ -584,7 +584,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
   <div class="prose">
     <ul class="spec">
       <li>しおりごとの自由なメモ欄。行程の箱のメモとは別。</li>
-      <li>メモのページはそのまま書き込める（「直す」ボタンなし。書いたそばから保存）。中に書いた URL と電話番号は、欄の下にボタンで並べて、タップで開ける・かけられる。行程の箱のメモ・予約のメモは、本文の中でタップできる。</li>
+      <li>メモのページはそのまま書き込める（「編集」ボタンなし。書いたそばから保存）。中に書いた URL と電話番号は、欄の下にボタンで並べて、タップで開ける・かけられる。行程の箱のメモ・予約のメモは、本文の中でタップできる。</li>
     </ul>
   </div>
 </section>
@@ -647,7 +647,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
   <h2><span class="num">14</span>作るときに実機で確かめること</h2>
   <div class="prose">
     <ul class="spec">
-      <li><span class="st chk">要確認</span><code>googlegmail:///search?q=</code> で Gmail アプリの検索画面まで開けるか。開けなければ <code>googlegmail://</code>（アプリを開くだけ）にする。予約番号はどちらでもコピー済み。</li>
+      <li><span class="st chk">確認済み</span>Gmail は <code>googlegmail:///search?q=</code> だと「リンクが開けませんでした」になるので、予約番号をコピーして <code>googlegmail://</code> でアプリを開くだけにした。</li>
       <li><span class="st chk">要確認</span>夫に送るリンクの長さ。2泊くらいのしおりを LINE で送って、途中で切れないか。</li>
       <li><span class="st chk">要確認</span>ホーム画面から開いたときに、地図・Gmail・サイト（Chrome）のリンクがちゃんと外のアプリで開くか。</li>
       <li><span class="st chk">要確認</span>ページめくりのスワイプと、縦スクロール・つまみでの並べ替えがぶつからないか。</li>

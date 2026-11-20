@@ -1,6 +1,6 @@
 // オフラインで開けるようにする service worker。
 // ★ ファイルを変えたら、必ず VERSION を上げること（上げないと iPhone に古い画面が残る）
-const VERSION = 'shiori-v6';
+const VERSION = 'shiori-v7';
 
 const FILES = [
   './',
@@ -30,7 +30,12 @@ const FILES = [
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(VERSION)
-      .then(c => c.addAll(FILES.map(f => new Request(f, { cache: 'reload' }))))
+      // GitHub Pages は配信元で数分ファイルを覚えているので、?v=版 を付けて必ず新しいものを取る
+      .then(c => Promise.all(FILES.map(f =>
+        fetch(new Request(f + (f.includes('?') ? '&' : '?') + 'v=' + VERSION, { cache: 'reload' })).then(res => {
+          if (!res.ok) throw new Error(f + ' ' + res.status);
+          return c.put(f, res);
+        }))))
       .then(() => self.skipWaiting())
   );
 });

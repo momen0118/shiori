@@ -1,4 +1,4 @@
-// しおりの中身を直す小窓たち
+// しおりの中身を編集する小窓たち
 // ctx … book.js が渡す { book, readOnly, change(fn, msg), goTo(key, opts) }
 
 import { h, icon, linkify, fmtMD, isUrl, normTime, toMin, isDate, diffDays, fmtDuration } from './util.js';
@@ -140,8 +140,7 @@ export function editStop(ctx, di, idx = null, preset = {}) {
       btn('ここから後ろをずらす', () => { closeSheet(true); shiftSheet(ctx, di, ord); }, 'quiet small', 'clock')));
   }
 
-  openSheet({ title: isNew ? '予定を追加' : '予定を直す', sub: dayName(ctx.book, di), body, actions });
-  if (isNew && !preset.name) setTimeout(() => name.focus(), 260);
+  openSheet({ title: isNew ? '予定を追加' : '予定を編集', sub: dayName(ctx.book, di), body, actions, focus: isNew && !preset.name ? name : null });
 }
 
 /* ---------- 移動 ---------- */
@@ -167,7 +166,7 @@ export function editMove(ctx, di, idx, insertAt) {
   if (idx != null) actions.push(btn('移動を消す', () => { closeSheet(); ctx.change(b => ensureDay(b, di).items.splice(idx, 1)); }, 'danger-quiet'));
   actions.push(btn(idx == null ? '入れる' : '保存', save, 'pri'));
   openSheet({
-    title: idx == null ? '移動を入れる' : '移動を直す',
+    title: idx == null ? '移動を入れる' : '移動を編集',
     body: [field('手段', mode), field('道のメモ', memo), h('p', { class: 'note' }, '所要時間は、前の予定の終了と次の予定の開始から自動で出ます。')],
     actions,
   });
@@ -247,8 +246,8 @@ const fmtShift = m => fmtDuration(Math.abs(m));
 
 /* ---------- 予約の小窓 ---------- */
 
-// Gmail アプリの検索。検索画面まで開けなければ 'googlegmail://' にする（アプリが開くだけ）
-const GMAIL_SEARCH = 'googlegmail:///search?q=';
+// Gmail アプリを開くだけ（検索の形 googlegmail:///search?q= は「リンクが開けませんでした」になったので使わない）
+const GMAIL_APP = 'googlegmail://';
 
 export function reservationSheet(ctx, di, idx) {
   const stop = dayItems(ctx.book, di)[idx];
@@ -268,14 +267,14 @@ export function reservationSheet(ctx, di, idx) {
 
   const actions = [];
   if (!ctx.readOnly && r.number) {
-    // 予約番号をコピーしてから Gmail アプリを開く（検索画面まで開けるかは実機で確かめる）
+    // 予約番号をコピーしてから Gmail アプリを開く。検索欄には自分で貼る
     const a = h('a', {
-      href: GMAIL_SEARCH + encodeURIComponent(r.number), class: 'btn pri wide',
+      href: GMAIL_APP, class: 'btn pri wide',
       onclick: () => { copyText(r.number, { done: '予約番号をコピーしました。Gmail の検索に貼ってください', title: '予約番号' }); },
     }, icon('mail'), 'Gmail で予約メールを探す');
     actions.push(a);
   }
-  if (!ctx.readOnly) actions.push(btn('直す', () => { closeSheet(true); editStop(ctx, di, idx); }, 'quiet'));
+  if (!ctx.readOnly) actions.push(btn('編集', () => { closeSheet(true); editStop(ctx, di, idx); }, 'quiet'));
 
   openSheet({
     head: h('div', { class: 'sheet-head' },
@@ -326,7 +325,7 @@ export function editCover(ctx) {
     }, extra ? `日付の外に予定の入った日が${extra}日あるので、残してあります` : null);
   };
   openSheet({
-    title: '表紙を直す',
+    title: '表紙を編集',
     body: [
       field('タイトル', title),
       h('div', { class: 'row2' }, field('初日', sd), field('最終日', ed)),
@@ -376,14 +375,14 @@ export function editPacking(ctx, i) {
   };
   inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); save(); } });
   openSheet({
-    title: '持ち物を直す',
+    title: '持ち物を編集',
     body: [field('名前', inp)],
     actions: [
       btn('消す', () => { closeSheet(); ctx.change(b => { b.packing.splice(i, 1); }, '消しました'); }, 'danger-quiet'),
       btn('保存', save, 'pri'),
     ],
+    focus: inp,
   });
-  setTimeout(() => inp.focus(), 260);
 }
 
 // 貼ったテキストの1行ずつを持ち物にする。行頭の「・」「-」「1.」「□」なども取る
@@ -409,37 +408,44 @@ export function bulkAddPacking(ctx) {
         ctx.change(b => { b.packing = [...(b.packing || []), ...list]; }, `${list.length}個入れました`);
       }, 'pri'),
     ],
+    focus: ta,
   });
-  setTimeout(() => ta.focus(), 260);
 }
 
 /* ---------- いけたらいく ---------- */
 
-export function editWish(ctx, i) {
-  const w = ctx.book.wishlist[i];
-  const name = textInput({ value: w.name });
+// i が null なら追加。focusOn: 'name' | 'site'（開いてすぐ入力する欄）
+export function editWish(ctx, i = null, focusOn = 'name') {
+  const isNew = i == null;
+  const w = isNew ? {} : ctx.book.wishlist[i];
+  const name = textInput({ value: w.name || '', placeholder: 'お店や場所の名前', enterkeyhint: 'done' });
   const site = textInput({ value: w.siteUrl || '', placeholder: 'お店などのサイト', type: 'url', inputmode: 'url' });
   const map = textInput({ value: w.mapUrl || '', placeholder: 'Googleマップの共有リンク', type: 'url', inputmode: 'url' });
   const err = h('div');
+  const save = () => {
+    const n = name.value.trim();
+    if (!n) { err.replaceChildren(errorBox(['名前を入れてください'])); name.focus(); return; }
+    const s = site.value.trim(), m = map.value.trim();
+    if ((s && !isUrl(s)) || (m && !isUrl(m))) { err.replaceChildren(errorBox(['リンクは https:// で始まる形で入れてください'])); return; }
+    closeSheet();
+    const o = { name: n };
+    if (s) o.siteUrl = s;
+    if (m) o.mapUrl = m;
+    ctx.change(b => {
+      if (isNew) b.wishlist = [...(b.wishlist || []), o];
+      else b.wishlist[i] = o;
+    }, isNew ? `「${n}」を追加しました` : null);
+  };
+  name.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); save(); } });
+  const actions = [];
+  if (!isNew) actions.push(btn('消す', () => { closeSheet(); ctx.change(b => { b.wishlist.splice(i, 1); }, '消しました'); }, 'danger-quiet'));
+  actions.push(btn(isNew ? '追加' : '保存', save, 'pri'));
   openSheet({
-    title: 'いけたらいくを直す',
-    body: [field('名前', name), field('サイト', site), field('地図', map), err],
-    actions: [
-      btn('消す', () => { closeSheet(); ctx.change(b => { b.wishlist.splice(i, 1); }, '消しました'); }, 'danger-quiet'),
-      btn('保存', () => {
-        const n = name.value.trim();
-        if (!n) { err.replaceChildren(errorBox(['名前を入れてください'])); return; }
-        const s = site.value.trim(), m = map.value.trim();
-        if ((s && !isUrl(s)) || (m && !isUrl(m))) { err.replaceChildren(errorBox(['リンクは https:// で始まる形で入れてください'])); return; }
-        closeSheet();
-        ctx.change(b => {
-          const o = { name: n };
-          if (s) o.siteUrl = s;
-          if (m) o.mapUrl = m;
-          b.wishlist[i] = o;
-        });
-      }, 'pri'),
-    ],
+    title: isNew ? 'いけたらいくを追加' : 'いけたらいくを編集',
+    body: [field('名前', name), field('サイト', site), field('地図', map),
+      isNew ? h('p', { class: 'note' }, '名前だけでも追加できます') : null, err],
+    actions,
+    focus: focusOn === 'site' ? site : name,
   });
 }
 
