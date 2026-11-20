@@ -265,9 +265,9 @@ function renderWishlist(ctx) {
       h('div', { class: 'c-btns' },
         ctx.readOnly ? null : h('button', { type: 'button', class: 'mbtn pri', onclick: () => wishToItinerary(ctx, i) }, icon('plus'), '行程に入れる'),
         links,
-        // サイトも地図も空なら「URLを追加」、どちらかあれば「修正」
+        // サイトも地図も空なら「URLを追加」、どちらかあれば「編集」
         ctx.readOnly ? null : (w.siteUrl || w.mapUrl
-          ? h('button', { type: 'button', class: 'mbtn quiet', onclick: () => editWish(ctx, i) }, icon('pen'), '修正')
+          ? h('button', { type: 'button', class: 'mbtn quiet', onclick: () => editWish(ctx, i) }, icon('pen'), '編集')
           : h('button', { type: 'button', class: 'mbtn quiet', onclick: () => editWish(ctx, i, 'site') }, icon('plus'), 'URLを追加'))));
   };
   list.forEach((w, i) => box.append(row(w, i)));
