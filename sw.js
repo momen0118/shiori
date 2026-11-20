@@ -1,6 +1,6 @@
 // オフラインで開けるようにする service worker。
 // ★ ファイルを変えたら、必ず VERSION を上げること（上げないと iPhone に古い画面が残る）
-const VERSION = 'shiori-v7';
+const VERSION = 'shiori-v8';
 
 const FILES = [
   './',

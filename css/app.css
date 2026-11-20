@@ -23,7 +23,10 @@
 
   --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
   --sl:env(safe-area-inset-left,0px);--sr:env(safe-area-inset-right,0px);
-  --top:calc(var(--st) + 52px);
+  /* 上の帯。ホーム画面アプリでは iPhone が画面の上の端にぼかしを重ねるので、
+     切り欠き（--st）がある時だけ、その分より少し下に文字を置く */
+  --stt:calc(var(--st) * 1.35);
+  --top:calc(var(--stt) + 52px);
   --tabw:38px;
   color-scheme:dark;
 }
@@ -97,7 +100,7 @@ a{color:var(--acc)}
 
 .topbar{
   position:absolute;left:0;right:0;top:0;z-index:8;height:var(--top);
-  padding:var(--st) calc(6px + var(--sr)) 0 calc(4px + var(--sl));
+  padding:var(--stt) calc(6px + var(--sr)) 0 calc(4px + var(--sl));
   display:flex;align-items:center;justify-content:space-between;
   background:var(--bg);border-bottom:1px solid var(--ln);
 }
@@ -112,7 +115,7 @@ a{color:var(--acc)}
 
 .band{
   position:absolute;left:0;right:0;top:0;z-index:8;height:var(--top);
-  padding:var(--st) 16px 0;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:var(--stt) 16px 0;display:flex;align-items:center;justify-content:center;gap:6px;
   background:color-mix(in srgb,var(--hue) 22%,var(--bg));color:var(--acc);font-size:13.5px;font-weight:600;
 }
 
@@ -448,7 +451,7 @@ input.field::-webkit-date-and-time-value{text-align:left}
 }
 #toast.in{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 /* 小窓が開いているときは、ボタンに重ならないよう上に出す */
-.sheet-open #toast{bottom:auto;top:calc(var(--st) + 12px);transform:translate(-50%,-16px)}
+.sheet-open #toast{bottom:auto;top:calc(var(--stt) + 12px);transform:translate(-50%,-16px)}
 .sheet-open #toast.in{transform:translate(-50%,0)}
 .toast-btn{border:0;background:transparent;color:inherit;font-weight:700;text-decoration:underline;min-height:36px;padding:0 4px;flex:none}
 
