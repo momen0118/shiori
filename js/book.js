@@ -37,7 +37,7 @@ export function openBook(root, opts) {
     const n = dayCount(rec.shiori);
     const list = [{ key: 'cover', tab: '表紙' }, { key: 'packing', tab: '持ち物' }];
     for (let i = 0; i < n; i++) list.push({ key: `day-${i}`, tab: `${i + 1}日目` });
-    list.push({ key: 'spots', tab: '立ち寄り' }, { key: 'memo', tab: 'メモ' });
+    list.push({ key: 'spots', tab: '行き先' }, { key: 'memo', tab: 'メモ' });
     return list;
   }
   const indexOf = key => Math.max(0, pages().findIndex(p => p.key === key));
@@ -323,7 +323,7 @@ export function openBook(root, opts) {
     let url = '';
     try { url = makeShareUrl(b); } catch { url = ''; }
     openMenu(b.title, [
-      { label: '表紙を直す', sub: 'タイトル・日付・行き先・ひとこと', icon: 'pen', onSelect: () => editCover(ctx) },
+      { label: '表紙を編集', sub: 'タイトル・日付・行き先・ひとこと', icon: 'pen', onSelect: () => editCover(ctx) },
       { label: '柄と色を変える', icon: 'palette', onSelect: () => editPattern(ctx) },
       { label: 'Claude 用に書き出す', sub: 'しおりの JSON をコピー', icon: 'copy', onSelect: () => exportForClaude(rec.shiori) },
       { label: 'Claude から読み込む', sub: '置き換え・いけたらいくだけ足す', icon: 'import', onSelect: () => importInto() },

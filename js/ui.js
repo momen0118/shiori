@@ -8,7 +8,8 @@ let current = null;
 const layer = () => document.getElementById('sheet-layer');
 
 // openSheet({ title, sub, body: Node|Node[], actions: Node[], onClose, className })
-export function openSheet({ title, sub, body, actions, onClose, className = '', head }) {
+// focus … 開いてすぐ入力できるようにする欄。タップの処理の中で当てるので、iPhone でもキーボードがすぐ出る
+export function openSheet({ title, sub, body, actions, onClose, className = '', head, focus }) {
   closeSheet(true);
   const L = layer();
   const dim = h('div', { class: 'dim', onclick: () => closeSheet() });
@@ -23,6 +24,7 @@ export function openSheet({ title, sub, body, actions, onClose, className = '', 
   L.append(dim, sheet);
   L.hidden = false;
   document.body.classList.add('sheet-open');
+  if (focus) { try { focus.focus({ preventScroll: true }); } catch { focus.focus(); } }
   requestAnimationFrame(() => { dim.classList.add('in'); sheet.classList.add('in'); });
   enableSwipeDown(sheet);
   current = { sheet, dim, onClose };

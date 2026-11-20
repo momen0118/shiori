@@ -1,4 +1,4 @@
-// しおりの中のページ：表紙・持ち物・n日目・立ち寄り先・メモ
+// しおりの中のページ：表紙・持ち物・n日目・行き先・メモ
 // それぞれ ctx を受け取って、ページの中身（DOM）を返す。
 
 import { h, icon, linkify, extLink, chromeLink, fmtMD, fmtRangeLong, fmtDuration, addDays, debounce } from './util.js';
@@ -23,7 +23,7 @@ export function renderCover(ctx) {
   const plate = h(ctx.readOnly ? 'div' : 'button', {
     class: 'cover-plate', type: ctx.readOnly ? null : 'button',
     onclick: ctx.readOnly ? null : () => editCover(ctx),
-    'aria-label': ctx.readOnly ? null : '表紙を直す',
+    'aria-label': ctx.readOnly ? null : '表紙を編集',
   },
   h('b', null, b.title || '（タイトルなし）'),
   b.startDate ? h('div', { class: 'd' }, fmtRangeLong(b.startDate, b.endDate)) : null,
@@ -210,7 +210,7 @@ function shiftBtn(ctx, di, ord) {
   return h('div', null, h('button', { type: 'button', class: 'mbtn quiet', onclick: e => { stop(e); shiftSheet(ctx, di, ord); } }, icon('clock'), 'ここから後ろをずらす'));
 }
 
-/* ---------- 立ち寄り先 ---------- */
+/* ---------- 行き先 ---------- */
 
 export function renderSpots(ctx) {
   const b = ctx.book;
@@ -237,7 +237,7 @@ export function renderSpots(ctx) {
   }, ico ? icon(ico) : null, label);
 
   return h('div', { class: 'pg' },
-    h('div', { class: 'p-head' }, h('h2', { class: 'p-h' }, '立ち寄り先')),
+    h('div', { class: 'p-head' }, h('h2', { class: 'p-h' }, '行き先')),
     h('div', { class: 'fchips' }, chip('all', 'すべて'), chip('rsv', '予約あり', 'ticket')),
     rows.length ? h('div', { class: 'slist' }, rows)
       : h('p', { class: 'empty' }, filter === 'rsv' ? '予約の付いた立ち寄りはありません' : '行程に立ち寄りを入れると、ここに並びます'),
@@ -265,25 +265,15 @@ function renderWishlist(ctx) {
       h('div', { class: 'c-btns' },
         ctx.readOnly ? null : h('button', { type: 'button', class: 'mbtn pri', onclick: () => wishToItinerary(ctx, i) }, icon('plus'), '行程に入れる'),
         links,
-        ctx.readOnly ? null : h('button', { type: 'button', class: 'mbtn quiet', onclick: () => editWish(ctx, i) }, '直す')));
+        // サイトも地図も空なら「URLを追加」、どちらかあれば「修正」
+        ctx.readOnly ? null : (w.siteUrl || w.mapUrl
+          ? h('button', { type: 'button', class: 'mbtn quiet', onclick: () => editWish(ctx, i) }, icon('pen'), '修正')
+          : h('button', { type: 'button', class: 'mbtn quiet', onclick: () => editWish(ctx, i, 'site') }, icon('plus'), 'URLを追加'))));
   };
   list.forEach((w, i) => box.append(row(w, i)));
 
-  let add = null;
-  if (!ctx.readOnly) {
-    const inp = textInput({ placeholder: 'お店や場所の名前（URLはあとからでも）', enterkeyhint: 'enter' });
-    const go = () => {
-      const v = inp.value.trim();
-      if (!v) return;
-      inp.value = '';
-      const i = (ctx.book.wishlist || []).length;
-      ctx.change(bk => { bk.wishlist = [...(bk.wishlist || []), { name: v }]; }, null, { render: false })
-        .then(() => box.append(row({ name: v }, i)));
-    };
-    inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); go(); } });
-    inp.addEventListener('blur', go);
-    add = h('label', { class: 'addbox' }, icon('plus'), inp);
-  }
+  const add = ctx.readOnly ? null
+    : h('button', { type: 'button', class: 'addbox', onclick: () => editWish(ctx, null) }, icon('plus'), 'お店や場所を追加');
 
   if (ctx.readOnly && !list.length) return null;
   return h('section', { class: 'wish' },

@@ -87,16 +87,20 @@ route();
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
+    const hadController = !!navigator.serviceWorker.controller;
     navigator.serviceWorker.register('./sw.js').then(reg => {
-      reg.addEventListener('updatefound', () => {
-        const w = reg.installing;
-        if (!w) return;
-        w.addEventListener('statechange', () => {
-          if (w.state === 'installed' && navigator.serviceWorker.controller) {
-            toast('新しい版が届きました', { action: '更新する', onAction: () => location.reload() });
-          }
-        });
-      });
+      // ホーム画面アプリは閉じずに裏に残ることが多いので、前に出てきたときにも新しい版を確かめる
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) reg.update().catch(() => {}); });
     }).catch(err => console.warn('service worker', err));
+    // 新しい版が使える状態になったら読み直す。入力中や小窓を開いているときは、お知らせだけ出す
+    let reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController || reloading) return;
+      const busy = document.body.classList.contains('sheet-open') ||
+        (document.activeElement && document.activeElement.matches('input, textarea'));
+      if (busy) { toast('新しい版が届きました', { action: '更新する', onAction: () => location.reload() }); return; }
+      reloading = true;
+      location.reload();
+    });
   });
 }

@@ -186,6 +186,6 @@ function newBook(recs, nav) {
       err,
     ],
     actions: [btn('やめる', () => closeSheet()), btn('作る', create, 'pri')],
+    focus: title,
   });
-  setTimeout(() => title.focus(), 260);
 }
