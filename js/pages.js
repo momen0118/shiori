@@ -79,7 +79,7 @@ export function renderPacking(ctx) {
     };
     inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); add(); } });
     inp.addEventListener('blur', add);
-    addRow = h('label', { class: 'addbox' }, icon('plus'), inp);
+    addRow = h('div', { class: 'addbox', onclick: e => { if (e.target !== inp) inp.focus(); } }, icon('plus'), inp);
   }
 
   return h('div', { class: 'pg' },

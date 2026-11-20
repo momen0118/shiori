@@ -24,7 +24,7 @@ export function editStop(ctx, di, idx = null, preset = {}) {
   let hasRsv = !!src.reservation;
   let label = src.label || '';
 
-  const name = textInput({ value: src.name || '', placeholder: '施設名・場所名', enterkeyhint: 'done' });
+  const name = textInput({ value: src.name || '', placeholder: '例：〇〇公園', enterkeyhint: 'done' });
   const labelChips = chips({ options: LABELS, value: label, free: true, colored: true, onChange: v => { label = v; drawRsv(); } });
   const start = clearable('time', src.start || '');
   const end = clearable('time', src.end || '');
@@ -48,7 +48,7 @@ export function editStop(ctx, di, idx = null, preset = {}) {
       return;
     }
     rIn.number = textInput({ value: r.number || '', placeholder: '予約番号', autocomplete: 'off' });
-    rIn.holder = textInput({ value: r.holder || '', placeholder: '誰の名前で予約したか' });
+    rIn.holder = textInput({ value: r.holder || '', placeholder: '予約した人' });
     const rows = [
       h('div', { class: 'sec-l' }, icon('ticket'), '予約'),
       field('予約番号', rIn.number),
@@ -226,7 +226,7 @@ export function shiftSheet(ctx, di, ord) {
     body: [
       h('div', { class: 'seg', role: 'group' }, segBtns),
       h('div', { class: 'chips' }, btns),
-      h('label', { class: 'fld inline' }, h('span', { class: 'fld-l' }, 'または'), num, h('span', null, '分')),
+      h('div', { class: 'fld inline' }, h('span', { class: 'fld-l' }, 'または'), num, h('span', null, '分')),
       preview,
     ],
     actions: [
@@ -418,7 +418,7 @@ export function bulkAddPacking(ctx) {
 export function editWish(ctx, i = null, focusOn = 'name') {
   const isNew = i == null;
   const w = isNew ? {} : ctx.book.wishlist[i];
-  const name = textInput({ value: w.name || '', placeholder: 'お店や場所の名前', enterkeyhint: 'done' });
+  const name = textInput({ value: w.name || '', placeholder: '例：〇〇ベーカリー', enterkeyhint: 'done' });
   const site = textInput({ value: w.siteUrl || '', placeholder: 'お店などのサイト', type: 'url', inputmode: 'url' });
   const map = textInput({ value: w.mapUrl || '', placeholder: 'Googleマップの共有リンク', type: 'url', inputmode: 'url' });
   const err = h('div');
