@@ -349,6 +349,13 @@ button.cover-plate:active{opacity:.85}
 .kb-open .sheet{max-height:calc(100% - 8px);padding-bottom:10px;border-radius:16px 16px 0 0}
 .kb-open .sheet .grab{display:none}
 .grab{width:40px;height:5px;border-radius:3px;background:var(--ln);margin:0 auto 10px;flex:none}
+.sheet-x{
+  position:absolute;top:6px;right:calc(6px + var(--sr));z-index:2;width:44px;height:44px;border:0;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;background:transparent;color:var(--mu);
+}
+.sheet-x .ico{width:20px;height:20px;padding:2px;border-radius:50%;background:var(--sf2);box-sizing:content-box}
+.sheet-x:active{opacity:.6}
+.sheet-head{padding-right:40px}
 .sheet-head{flex:none;padding-bottom:6px}
 .sheet-title{font-family:var(--display);font-weight:700;font-size:18px;line-height:1.4;overflow-wrap:anywhere}
 .sheet-sub{font-size:12.5px;color:var(--mu);margin-top:2px}
@@ -389,6 +396,9 @@ button.cover-plate:active{opacity:.85}
 }
 .field:focus{border-color:var(--acc)}
 .field::placeholder{color:var(--mu);opacity:.8}
+/* type=search の欄を、ふつうの欄と同じ見た目に */
+input[type="search"].field::-webkit-search-cancel-button,
+input[type="search"].field::-webkit-search-decoration{-webkit-appearance:none;appearance:none;display:none}
 textarea.field{resize:none;line-height:1.6;display:block}
 input[type="time"].field,input[type="date"].field{display:block;text-align:left;min-height:46px}
 input.field::-webkit-date-and-time-value{text-align:left}

@@ -183,7 +183,7 @@ export function shiftSheet(ctx, di, ord) {
   let amount = 0;
   let min = 0;
   const preview = h('div', { class: 'shift-preview' });
-  const num = textInput({ value: '', placeholder: '分', type: 'text', inputmode: 'numeric' });
+  const num = textInput({ value: '', placeholder: '分', inputmode: 'numeric' });
   num.classList.add('num');
   num.setAttribute('pattern', '[0-9]*');
   const draw = () => {

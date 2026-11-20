@@ -15,6 +15,8 @@ export function openSheet({ title, sub, body, actions, onClose, className = '', 
   const dim = h('div', { class: 'dim', onclick: () => closeSheet() });
   const sheet = h('div', { class: 'sheet ' + className, role: 'dialog', 'aria-modal': 'true', 'aria-label': title || '' },
     h('div', { class: 'grab', 'aria-hidden': 'true' }),
+    // どの小窓にも右上に「×」。キーボードが出ていても、ここから閉じられる
+    h('button', { type: 'button', class: 'sheet-x', 'aria-label': '閉じる', onclick: () => closeSheet() }, icon('x')),
     head || (title ? h('div', { class: 'sheet-head' },
       h('div', { class: 'sheet-title' }, title),
       sub ? h('div', { class: 'sheet-sub' }, sub) : null) : null),
