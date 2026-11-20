@@ -15,7 +15,9 @@ export function field(label, control, hint) {
     hint ? h('span', { class: 'fld-h' }, hint) : null);
 }
 
-export function textInput({ value = '', placeholder = '', maxlength, type = 'text', inputmode, enterkeyhint, autocomplete = 'off' } = {}) {
+// ふつうの文字の欄は type=search にする。iPhone が「連絡先を自動入力」を出してこないようにするため
+// （見た目と動きは CSS とふつうの欄と同じにしてある）
+export function textInput({ value = '', placeholder = '', maxlength, type = 'search', inputmode, enterkeyhint = 'done', autocomplete = 'off' } = {}) {
   return h('input', { class: 'field', type, value, placeholder, maxlength, inputmode, enterkeyhint, autocomplete, autocapitalize: 'off', spellcheck: 'false' });
 }
 
@@ -52,7 +54,7 @@ export function clearable(type, value = '') {
 export function chips({ options, value = '', free = false, maxlength = 6, placeholder = '自由に', onChange, allowNone = true, colored = false }) {
   let cur = value || '';
   const wrap = h('div', { class: 'chips' });
-  const freeInp = free ? h('input', { class: 'field chip-free', type: 'text', maxlength, placeholder, value: options.includes(cur) ? '' : cur, autocomplete: 'off' }) : null;
+  const freeInp = free ? h('input', { class: 'field chip-free', type: 'search', enterkeyhint: 'done', maxlength, placeholder, value: options.includes(cur) ? '' : cur, autocomplete: 'off', autocorrect: 'off' }) : null;
   const btns = options.map(o => h('button', {
     type: 'button', class: 'chip' + (colored ? ' lchip' : ''), 'aria-pressed': String(o === cur),
     style: colored ? { '--lh': labelHue(o) } : null,
