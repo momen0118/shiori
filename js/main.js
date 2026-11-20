@@ -5,7 +5,7 @@
 //   #s=<データ>   夫に送ったリンク（見るだけ）
 
 import { h, icon } from './util.js';
-import { watchKeyboard, closeSheet, toast, applyTheme, neutralizeFields } from './ui.js';
+import { watchKeyboard, closeSheet, toast, applyTheme } from './ui.js';
 import { renderShelf, renderMemories } from './shelf.js';
 import { openBook } from './book.js';
 import { readShareHash } from './share.js';
@@ -81,7 +81,6 @@ function showError(title, msg) {
 window.addEventListener('hashchange', route);
 applyTheme();
 watchKeyboard();
-neutralizeFields();
 route();
 
 /* ---------- オフラインで開けるように（service worker） ---------- */

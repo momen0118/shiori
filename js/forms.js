@@ -9,8 +9,7 @@ export function labelEl(label) {
 }
 
 export function field(label, control, hint) {
-  // 見出しは <label> にしない（iPhone が見出しの文字から連絡先の欄だと推測するため。ui.js の neutralizeFields）
-  return h('div', { class: 'fld' },
+  return h('label', { class: 'fld' },
     h('span', { class: 'fld-l' }, label),
     control,
     hint ? h('span', { class: 'fld-h' }, hint) : null);
